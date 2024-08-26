@@ -51,10 +51,11 @@ export default class Bot extends EventEmitter {
         const requestId = response.echo
         if (this.pendingRequests.has(requestId)) {
             const { resolve, reject } = this.pendingRequests.get(requestId)
+            const data = response.data
             if (response.status === "ok") {
-                resolve(response)
+                resolve(data)
             } else {
-                reject(response)
+                reject(data)
             }
             this.pendingRequests.delete(requestId)
         }

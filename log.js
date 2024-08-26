@@ -21,7 +21,7 @@ export default class Logger {
     
     #format(str, mode) {
         const date = new Date()
-        const dateText = `${date.getUTCFullYear()}/${date.getMonth()+1}/${date.getDate()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds()}`
+        const dateText = `${date.getUTCFullYear()}/${date.getMonth()+1}/${date.getDate()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`
         return `[${dateText}] [${this.name}/${mode}] ${str}`
     }
 }
