@@ -8,7 +8,7 @@
 import Logger from "./log.js"
 import Bot from "./bot.js"
 ```
-其中log.js是可选的，不一定要导入，但也许要放在bot.js同目录下，因为bot.js导入了log.js
+其中log.js是可选的，不一定要导入，但也须放在bot.js同目录下，因为bot.js导入了log.js
 
 `new Bot("ws://host:port/")`创建Bot对象，地址为为正向ws连接地址
 
