@@ -10,7 +10,7 @@ import Bot from "./bot.js"
 ```
 其中log.js是可选的，不一定要导入，但也须放在bot.js同目录下，因为bot.js导入了log.js
 
-`new Bot("ws://host:port/")`创建Bot对象，地址为为正向ws连接地址
+`new Bot("ws://host:port/")`创建Bot对象，地址为正向ws连接地址
 
 `Bot.on(event, data => callback)`监听事件，`event`是事件类型字符串，`data`是事件数据，格式与对应OneBot事件数据相同，事件有下列六种：
 
