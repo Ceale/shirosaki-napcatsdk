@@ -3,6 +3,8 @@
 
 基于Nodejs和ws(npm包)的极简OneBot v11框架(?)，使用前须安装ws包（npm i ws）
 
+虽说叫框架，但实际上也只是对ws对象的简单封装
+
 ### 使用方法
 ```
 import Logger from "./log.js"
