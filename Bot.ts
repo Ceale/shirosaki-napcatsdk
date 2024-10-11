@@ -86,7 +86,7 @@ export class MessageEvent {
     constructor(event) {
         this.timestamp = event.timestamp
         this.selfId = event.self_id
-        this.souce = new Souce(event.post_type, event.user_id, event.group_id)
+        this.souce = new Souce(event.message_type, event.user_id, event.group_id)
         
         this.messageid = event.message_id,
         this.rawMessage = event.raw_message,
@@ -230,7 +230,11 @@ export default class Bot {
     public onMessage(callback: EventCallback<MessageEvent>, options?: {
         once?: boolean,
         at?: boolean,
-        type?: SouceType
+        type?: SouceType,
+        filter?: {
+            groupId?: number[],
+            userId?: number[]
+        }
     }) {
         const handle = (eventData) => {
             const messageEvent = new MessageEvent(eventData)
@@ -240,6 +244,15 @@ export default class Bot {
                 const at = messageEvent.message.getSegment(1)
                 if (at === undefined) return
                 if (at.Type !== MessageSegmentType.At || at.qq !== messageEvent.selfId.toString()) return
+            }
+
+            // 实现options: type
+            if (options?.type !== undefined && options.type !== messageEvent.souce.type) return
+
+            // 实现options: filter
+            if (options?.filter !== undefined) {
+                if (options.filter?.groupId !== undefined && !options.filter.groupId.includes(messageEvent.souce.groupId)) return
+                if (options.filter?.userId !== undefined && !options.filter.userId.includes(messageEvent.souce.userId)) return
             }
 
             callback(messageEvent)
