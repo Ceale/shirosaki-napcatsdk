@@ -28,5 +28,5 @@ import Bot from "./bot.js"
 `Bot.send(action, params)`是调用api，`action`是api名称字符串，`params`是api所需参数，格式同[公开 API](https://github.com/botuniverse/onebot-11/blob/master/api/public.md)。
 该方法返回一个Promise，在调用api成功时会返回调用结果的`data`字段
 
-
+### 其他
 项目icon修改自[萌娘百科](https://mzh.moegirl.org.cn/File:Nav-wataten3.png)，非商用引用，版权属于原作者。
