@@ -1,10 +1,15 @@
 import { WebSocket } from "ws"
 import Logger from "./Log.ts"
-import { wait } from "./Util.ts"
+import { generateRandomHex, wait } from "./Util.ts"
 import { Message } from "./Message.ts"
-import { MessageSegmentType } from "./MessageSegment.ts"
+import { At, MessageSegmentType, Text } from "./MessageSegment.ts"
 import { error, log } from "node:console"
 
+declare global {
+    interface Array<T> {
+        includes(value: any): boolean
+    }
+}
 const logger = new Logger("bot")
 
 export type EventCallback<EventData> = (eventData: EventData) => void
@@ -46,20 +51,46 @@ export enum SouceType {
     Private = "private"
 }
 
-export class Souce {
-    // type: SouceType
-    // groupId?: number
-    // userId: number
+export class Target {
+    type: SouceType
+    userId: number | undefined = undefined
+    groupId: number | undefined = undefined
 
-    constructor(
-        // type, userId, groupId?
-        public type: SouceType,
-        public userId: number,
-        public groupId?: number
-    ) {
+    constructor(souce: Source);
+    constructor(type: SouceType, id: number);
+    constructor(...args: any[]) {
+        if (args.length === 1) {
+            const souce: Source = args[0]
+            this.type = souce.type
+            this.groupId = souce.groupId
+            this.userId = souce.userId
+        } else {
+            const type: SouceType = args[0]
+            const id: number = args[1]
+            this.type = type
+            if (type === SouceType.Group) {
+                this.groupId = id
+            } else {
+                this.userId = id
+            }
+        }
     }
 
-    equal(souce: Souce) {
+    
+}
+
+export class Source {
+    type: SouceType
+    groupId?: number
+    userId: number
+
+    constructor(type, userId, groupId?) {
+        this.type = type
+        this.userId = userId
+        this.groupId = groupId
+    }
+
+    equals(souce: Source) {
         if (
             souce.type !== this.type
             || souce.userId !== this.userId
@@ -70,36 +101,74 @@ export class Souce {
 }
 
 export class MessageEvent {
-    timestamp: number
-    selfId: number
-    
-    souce: Souce
-    
-    messageid: number
-    message: Message
-    rawMessage: string
-    
-    sender: Sender
-    
-    session: Session
+    private bot: Bot
 
-    constructor(event) {
+    public timestamp: number
+    
+    public source: Source
+    
+    public messageId: number
+    public message: Message
+    
+    public sender: Sender
+    
+    public session: Session
+
+    constructor(event, bot) {
         this.timestamp = event.timestamp
-        this.selfId = event.self_id
-        this.souce = new Souce(event.message_type, event.user_id, event.group_id)
+        this.source = new Source(event.message_type, event.user_id, event.group_id)
         
-        this.messageid = event.message_id,
-        this.rawMessage = event.raw_message,
+        this.messageId = event.message_id,
         this.message = Message.fromJSON(event.message),
 
         this.sender = new Sender(event.user_id, event.sender)
+        this.session = new Session(this.source, bot)
     }
 }
 
-class Session {
+export class Session {
+    
+    private bot: Bot
+    private source: Source
+    private target: Target
+
+    constructor(souce: Source, bot: Bot) {
+        this.bot = bot
+        this.source = souce
+        this.target = new Target(this.source)
+    }
+    
+    async reply(message: Message| string) {
+        return await this.bot.sendMessage(this.target, message)
+    }
+    waitAnswer(timeout: number): Promise<{message: Message, messageId: number}|null> {
+        return new Promise((resolve) => {
+            this.bot.sessionList.add(this.source)
+            const handle = (event) => {
+                const messageEvent = new MessageEvent(event, this.bot)
+                if (this.source.equals(messageEvent.source)) {
+                    this.bot.sessionList.delete(this.source)
+                    this.bot.offEvent(EventType.Message, handle)
+                    resolve({message: messageEvent.message, messageId: messageEvent.messageId})
+                }
+            }
+            this.bot.onEvent(EventType.Message, handle)
+            setTimeout(() => {
+                this.bot.sessionList.delete(this.source)
+                this.bot.offEvent(EventType.Message, handle)
+                resolve(null)
+            }, timeout)
+        })
+    }
+    async inquire(message: Message| string, timeout: number) {
+        const inquireId = await this.reply(message)
+        const answer = await this.waitAnswer(timeout)
+        return {
+            inquireId,
+            answer
+        }
+    }
 }
-
-
 
 export class NoticeEventData {
     constructor() {
@@ -126,41 +195,96 @@ export class MetaEventData {
 }
 
 export default class Bot {
-    private connect: WebSocket
+    private options: {
+        url: string,
+        debug: boolean
+        retryInterval: number
+    }
+    private connection: WebSocket
 
-    public constructor(url, debug = true) {
+    private id: number
+    private name: string
+    public getBotInfo() {
+        return {
+            id: this.id,
+            name: this.name
+        }
+    }
+
+    public constructor(options: {
+        url: string,
+        debug?: boolean
+        retryInterval?: number
+    }) {
+
+        this.options = (()=>{
+            return {
+                url: options.url,
+                debug: options.debug || false,
+                retryInterval: options.retryInterval || 5000,
+            }
+        })()
+
         this.eventListenerList.set(EventType.Message, new Set())
         this.eventListenerList.set(EventType.Notice, new Set())
         this.eventListenerList.set(EventType.Request, new Set())
         this.eventListenerList.set(EventType.Meta, new Set())
-
-        this.initializeConnection(url, debug)
     }
 
-    private initializeConnection(url, debug) {
-        this.connect = new WebSocket(url)
-        this.connect.on("error", err => {
+    public connect(): Promise<void> {
+        this.initializeConnection()
+        return new Promise(resolve => {
+            this.onEvent(EventType.Meta, (event) => {
+                if (event.meta_event_type === "lifecycle" && event.sub_type === "connect") {
+                    logger.info("已连接")
+                    resolve()
+                    this.callApi("get_login_info").then((botInfo: any) => {
+                        this.id = botInfo.user_id
+                        this.name = botInfo.nickname
+                    })
+                    
+                }
+            })
+        })
+    }
+
+    public disconnect(): Promise<void> {
+        return new Promise(resolve => {
+            const connection = this.connection
+            this.connection = null
+            connection.on("close", () => {
+                resolve()
+            })
+            connection.close()
+        })
+    }
+
+    private initializeConnection() {
+        this.connection = new WebSocket(this.options.url)
+        logger.info("连接中...")
+
+        this.connection.on("error", err => {
             error("WebSocket Error:", err)
         })
 
-        this.connect.on("open", () => {
-            logger.info("连接中...")
-        })
-        
-        this.connect.on("message", rawData => {
+        this.connection.on("message", rawData => {
             const data = JSON.parse(rawData.toString())
             if ("post_type" in data) {
                 this.handleEvent(data)
             } else {
                 this.handleResponse(data)
             }
-            if (debug === true) logger.debug("接受数据："+rawData.toString())
+            if (this.options.debug === true) logger.debug("接收数据："+rawData.toString())
         })
 
-        this.connect.on("close", async () => {
-            logger.info("连接已断开，5秒后重连")
-            await wait(5000)
-            this.initializeConnection(url, debug)
+        this.connection.on("close", async () => {
+            if (this.connection === null) {
+                logger.info("连接已断开")
+                return
+            }
+            logger.info(`连接已断开，将在${this.options.retryInterval}ms后重连`)
+            await wait(this.options.retryInterval)
+            this.initializeConnection()
         })
     }
 
@@ -171,26 +295,18 @@ export default class Bot {
         listenerList!.add(callback)
     }
 
-    // public onceEvent(eventType: EventType, callback: EventCallback<any>) {
-    //     const handle = (eventData) => {
-    //         callback(eventData)
-    //         this.offEvent(eventType, handle)
-    //     }
-    //     this.onEvent(eventType, handle)
-    // }
-
     private handleEvent(event: any) {
         if (event.post_type === "message") {
-            this.eventListenerList.get(EventType.Message)!.forEach(callback=>callback(event))
+            [...this.eventListenerList.get(EventType.Message)!].forEach(callback=>callback(event))
         }
         if (event.post_type === "notice") {
-            this.eventListenerList.get(EventType.Notice)!.forEach(callback=>callback(event))
+            [...this.eventListenerList.get(EventType.Notice)!].forEach(callback=>callback(event))
         }
         if (event.post_type === "request") {
-            this.eventListenerList.get(EventType.Request)!.forEach(callback=>callback(event))
+            [...this.eventListenerList.get(EventType.Request)!].forEach(callback=>callback(event))
         }
         if (event.post_type === "meta_event") {
-            this.eventListenerList.get(EventType.Meta)!.forEach(callback=>callback(event))
+            [...this.eventListenerList.get(EventType.Meta)!].forEach(callback=>callback(event))
         }
     }
 
@@ -199,15 +315,15 @@ export default class Bot {
         listenerList!.delete(callback)
     }
 
-    requestsList = new Map()
+    private requestsList = new Map()
     
-    public send(action, params) {
+    public callApi(action, params?): Promise<any> {
         return new Promise((resolve, reject) => {
-            const requestId = Math.floor(Math.random()*100000000).toString().padStart(8, "0")
+            const requestId = generateRandomHex(8)
             this.requestsList.set(requestId, { resolve, reject })
-            this.connect.send(Buffer.from(JSON.stringify({
+            this.connection.send(Buffer.from(JSON.stringify({
                 action: action,
-                params: params,
+                params: params || {},
                 echo: requestId
             })))
         })
@@ -227,6 +343,28 @@ export default class Bot {
         }
     }
 
+    public async sendMessage(target: Target, message: Message|string): Promise<number> {
+        message = (()=>{
+            if (typeof message === "string") {
+                return new Message(new Text(message))
+            }
+            return message
+        })()
+        if (target.type === SouceType.Group) {
+            return (await this.callApi("send_group_msg", {
+                group_id: target.groupId,
+                message: message.toJSON()
+            }))?.message_id
+        } else {
+            return (await this.callApi("send_private_msg", {
+                user_id: target.userId,
+                message: message.toJSON()
+            }))?.message_id
+        }
+    }
+
+    public sessionList = new Set<Source>()
+
     public onMessage(callback: EventCallback<MessageEvent>, options?: {
         once?: boolean,
         at?: boolean,
@@ -237,22 +375,26 @@ export default class Bot {
         }
     }) {
         const handle = (eventData) => {
-            const messageEvent = new MessageEvent(eventData)
+            const messageEvent = new MessageEvent(eventData, this)
+
+            for (const souce of this.sessionList) {
+                if (messageEvent.source.equals(souce)) return
+            }
 
             // 实现options: at
             if (options?.at === true) {
                 const at = messageEvent.message.getSegment(1)
                 if (at === undefined) return
-                if (at.Type !== MessageSegmentType.At || at.qq !== messageEvent.selfId.toString()) return
+                if (!at.isAt() || at.target !== this.getBotInfo().id) return
             }
 
             // 实现options: type
-            if (options?.type !== undefined && options.type !== messageEvent.souce.type) return
+            if (options?.type !== undefined && options.type !== messageEvent.source.type) return
 
             // 实现options: filter
             if (options?.filter !== undefined) {
-                if (options.filter?.groupId !== undefined && !options.filter.groupId.includes(messageEvent.souce.groupId)) return
-                if (options.filter?.userId !== undefined && !options.filter.userId.includes(messageEvent.souce.userId)) return
+                if (options.filter?.groupId !== undefined && !options.filter.groupId.includes(messageEvent.source.groupId)) return
+                if (options.filter?.userId !== undefined && !options.filter.userId.includes(messageEvent.source.userId)) return
             }
 
             callback(messageEvent)

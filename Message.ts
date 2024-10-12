@@ -1,4 +1,4 @@
-import { MessageSegment, Text, Image, At, Face, MessageSegmentType } from "./MessageSegment"
+import { MessageSegment, Text, Image, At, Face, MessageSegmentType, Mface } from "./MessageSegment"
 
 export class Message {
     private segments: MessageSegment[]
@@ -29,21 +29,25 @@ export class Message {
     }
 
     static fromJSON(jsonSegments: object[]): Message {
-        const segments = jsonSegments.map(segmentJson => {
-            const type = segmentJson.type
-            switch (type) {
-                case MessageSegmentType.Text:
-                    return new Text((segmentJson.data as any).text)
-                case MessageSegmentType.Image:
-                    return new Image((segmentJson.data as any).file)
-                case MessageSegmentType.At:
-                    return new At((segmentJson.data as any).qq)
-                case MessageSegmentType.Face:
-                    return new Face((segmentJson.data as any).id)
-                default:
+        const segments = jsonSegments.map((segmentJson: any) => {
+            const type: MessageSegmentType = segmentJson.type
+            if (type === "text") {
+                return new Text((segmentJson.data as any).text)
             }
-        })
-
+            if(type === "face") {
+                return new Face((segmentJson.data as any).id)
+            }
+            if (type === "image" && segmentJson.data?.sub_type === 0) {
+                return new Image((segmentJson.data as any).url)
+            }
+            if (type === "at") {
+                return new At((segmentJson.data as any).qq)
+            }
+            if (type === "image" && segmentJson.data?.sub_type === 1) {
+                return new Mface((segmentJson.data as any).url)
+            }
+            return null
+        }).filter(segment => segment !== null)
         return new Message(...segments)
     }
 }

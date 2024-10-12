@@ -1,5 +1,6 @@
 import path from "node:path"
 import fs from "node:fs"
+import { log } from "node:console"
 
 export async function moduleLoader(dirs: string|string[], params: any[]) {
 
