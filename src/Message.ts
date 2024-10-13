@@ -48,6 +48,6 @@ export class Message {
             }
             return null
         }).filter(segment => segment !== null)
-        return new Message(...segments)
+        return new Message(...(segments as MessageSegment[]))
     }
 }

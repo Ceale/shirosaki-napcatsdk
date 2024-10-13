@@ -1,8 +1,8 @@
 import { WebSocket } from "ws"
-import Logger from "./Log.ts"
-import { generateRandomHex, wait } from "./Util.ts"
-import { Message } from "./Message.ts"
-import { At, MessageSegmentType, Text } from "./MessageSegment.ts"
+import Logger from "./Log"
+import { generateRandomHex, wait } from "./Util"
+import { Message } from "./Message"
+import { At, MessageSegmentType, Text } from "./MessageSegment"
 import { error, log } from "node:console"
 
 declare global {
@@ -30,7 +30,7 @@ export class Sender {
     level: string | undefined
     title: string | undefined
     role: "owner"|"admin"|"member" | undefined
-    constructor(id, sender) {
+    constructor(id: number, sender: any) {
         this.id = id
         this.name = sender.nickname
         this.nickname = sender.card || sender.nickname
@@ -84,7 +84,7 @@ export class Source {
     groupId?: number
     userId: number
 
-    constructor(type, userId, groupId?) {
+    constructor(type: SouceType, userId: number, groupId?: number) {
         this.type = type
         this.userId = userId
         this.groupId = groupId
@@ -101,8 +101,6 @@ export class Source {
 }
 
 export class MessageEvent {
-    private bot: Bot
-
     public timestamp: number
     
     public source: Source
@@ -114,7 +112,7 @@ export class MessageEvent {
     
     public session: Session
 
-    constructor(event, bot) {
+    constructor(event: any, bot: Bot) {
         this.timestamp = event.timestamp
         this.source = new Source(event.message_type, event.user_id, event.group_id)
         
@@ -144,7 +142,7 @@ export class Session {
     waitAnswer(timeout: number): Promise<{message: Message, messageId: number}|null> {
         return new Promise((resolve) => {
             this.bot.sessionList.add(this.source)
-            const handle = (event) => {
+            const handle = (event: any) => {
                 const messageEvent = new MessageEvent(event, this.bot)
                 if (this.source.equals(messageEvent.source)) {
                     this.bot.sessionList.delete(this.source)
@@ -170,29 +168,29 @@ export class Session {
     }
 }
 
-export class NoticeEventData {
-    constructor() {
+// export class NoticeEventData {
+//     constructor() {
         
-    }
-    timestamp: number
-    selfid: number
+//     }
+//     timestamp: number
+//     selfid: number
 
-}
+// }
 
-export class RequestEventData {
-    constructor() {
+// export class RequestEventData {
+//     constructor() {
         
-    }
-    timestamp: number
-    selfid: number
+//     }
+//     timestamp: number
+//     selfid: number
 
-}
+// }
 
-export class MetaEventData {
-    timestamp: number
-    selfid: number
+// export class MetaEventData {
+//     timestamp: number
+//     selfid: number
 
-}
+// }
 
 export default class Bot {
     private options: {
@@ -200,11 +198,12 @@ export default class Bot {
         debug: boolean
         retryInterval: number
     }
-    private connection: WebSocket
+    private connection: WebSocket | null = null
 
-    private id: number
-    private name: string
+    private id: number | undefined
+    private name: string | undefined
     public getBotInfo() {
+        if (this.connection === null) throw new Error("当前未连接")
         return {
             id: this.id,
             name: this.name
@@ -232,6 +231,7 @@ export default class Bot {
     }
 
     public connect(): Promise<void> {
+        if (this.connection !== null) throw new Error("当前已连接")
         this.initializeConnection()
         return new Promise(resolve => {
             this.onEvent(EventType.Meta, (event) => {
@@ -249,7 +249,9 @@ export default class Bot {
     }
 
     public disconnect(): Promise<void> {
+        if (this.connection === null) throw new Error("当前未连接")
         return new Promise(resolve => {
+            if (this.connection === null) return
             const connection = this.connection
             this.connection = null
             connection.on("close", () => {
@@ -317,11 +319,12 @@ export default class Bot {
 
     private requestsList = new Map()
     
-    public callApi(action, params?): Promise<any> {
+    public callApi(action: string, params?: object): Promise<any> {
+        if (this.connection === null) throw new Error("当前未连接")
         return new Promise((resolve, reject) => {
             const requestId = generateRandomHex(8)
             this.requestsList.set(requestId, { resolve, reject })
-            this.connection.send(Buffer.from(JSON.stringify({
+            this.connection!.send(Buffer.from(JSON.stringify({
                 action: action,
                 params: params || {},
                 echo: requestId
@@ -329,7 +332,7 @@ export default class Bot {
         })
     }
 
-    private handleResponse(response) {
+    private handleResponse(response: any) {
         const requestId = response.echo
         if (this.requestsList.has(requestId)) {
             const { resolve, reject } = this.requestsList.get(requestId)
@@ -374,7 +377,7 @@ export default class Bot {
             userId?: number[]
         }
     }) {
-        const handle = (eventData) => {
+        const handle = (eventData: any) => {
             const messageEvent = new MessageEvent(eventData, this)
 
             for (const souce of this.sessionList) {

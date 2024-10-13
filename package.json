@@ -1,11 +1,36 @@
 {
-  "name": "core",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "name": "shirosaki-onebot",
+  "version": "0.1.0",
+  "description": "极简OneBot v11框架",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.cjs",
+      "types": "./lib/index.d.ts"
+    },
+    "./package.json": "./package.json"
   },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "筱莱Ceale",
+  "license": "Apache-2.0",
+  "keywords": [
+    "typescript",
+    "onebot",
+    "onebot-sdk",
+    "onebot11"
+  ],
+  "homepage": "https://github.com/Ceale/shirosaki-onebot",
+  "repository": {
+    "url": "git+https://github.com/Ceale/shirosaki-onebot.git"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4"
   }
 }
