@@ -27,29 +27,29 @@ export class Sender {
     }
 }
 
-export enum SouceType {
+export enum SourceType {
     Group = "group",
     Private = "private"
 }
 
 export class Target {
-    type: SouceType
+    type: SourceType
     userId: number | undefined = undefined;
     groupId: number | undefined = undefined;
 
-    constructor(souce: Source)
-    constructor(type: SouceType, id: number)
+    constructor(source: Source)
+    constructor(type: SourceType, id: number)
     constructor(...args: any[]) {
         if (args.length === 1) {
-            const souce: Source = args[0]
-            this.type = souce.type
-            this.groupId = souce.groupId
-            this.userId = souce.userId
+            const source: Source = args[0]
+            this.type = source.type
+            this.groupId = source.groupId
+            this.userId = source.userId
         } else {
-            const type: SouceType = args[0]
+            const type: SourceType = args[0]
             const id: number = args[1]
             this.type = type
-            if (type === SouceType.Group) {
+            if (type === SourceType.Group) {
                 this.groupId = id
             } else {
                 this.userId = id
@@ -61,20 +61,20 @@ export class Target {
 }
 
 export class Source {
-    type: SouceType
+    type: SourceType
     groupId?: number
     userId: number
 
-    constructor(type: SouceType, userId: number, groupId?: number) {
+    constructor(type: SourceType, userId: number, groupId?: number) {
         this.type = type
         this.userId = userId
         this.groupId = groupId
     }
 
-    equals(souce: Source) {
-        if (souce.type !== this.type
-            || souce.userId !== this.userId
-            || souce.groupId !== this.groupId) return false
+    equals(source: Source) {
+        if (source.type !== this.type
+            || source.userId !== this.userId
+            || source.groupId !== this.groupId) return false
         return true
     }
 }
@@ -109,9 +109,9 @@ export class Session {
     private source: Source
     private target: Target
 
-    constructor(souce: Source, bot: Bot) {
+    constructor(source: Source, bot: Bot) {
         this.bot = bot
-        this.source = souce
+        this.source = source
         this.target = new Target(this.source)
     }
 

@@ -4,7 +4,7 @@ import { generateRandomHex, wait } from "./Util"
 import { Message } from "./Message"
 import { At, MessageSegmentType, Text } from "./MessageSegment"
 import { error, log } from "node:console"
-import { Target, SouceType, Source, MessageEvent } from "./MessageEvent"
+import { Target, SourceType, Source, MessageEvent } from "./MessageEvent"
 
 declare global {
     interface Array<T> {
@@ -207,7 +207,7 @@ export class Bot {
             }
             return message
         })()
-        if (target.type === SouceType.Group) {
+        if (target.type === SourceType.Group) {
             return (await this.callApi("send_group_msg", {
                 group_id: target.groupId,
                 message: message.toJSON()
@@ -225,7 +225,7 @@ export class Bot {
     public onMessage(callback: (event: MessageEvent) => void, options?: {
         once?: boolean,
         at?: boolean,
-        type?: SouceType,
+        type?: SourceType,
         filter?: {
             groupId?: number[],
             userId?: number[]
@@ -234,8 +234,8 @@ export class Bot {
         const handle = (eventData: any) => {
             const messageEvent = new MessageEvent(eventData, this)
 
-            for (const souce of this.sessionList) {
-                if (messageEvent.source.equals(souce)) return
+            for (const source of this.sessionList) {
+                if (messageEvent.source.equals(source)) return
             }
 
             // 实现options: at
