@@ -1,6 +1,6 @@
 {
   "name": "shirosaki-onebot",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "极简OneBot v11框架",
   "type": "module",
   "main": "lib/index.cjs",
