@@ -1,4 +1,4 @@
-import { OneBot, EventType } from "./Bot"
+import { Bot, EventType } from "./Bot"
 import { Message } from "./Message"
 
 
@@ -91,7 +91,7 @@ export class MessageEvent {
 
     public session: Session
 
-    constructor(event: any, bot: OneBot) {
+    constructor(event: any, bot: Bot) {
         this.timestamp = event.timestamp
         this.source = new Source(event.message_type, event.user_id, event.group_id)
 
@@ -105,11 +105,11 @@ export class MessageEvent {
 
 export class Session {
 
-    private bot: OneBot
+    private bot: Bot
     private source: Source
     private target: Target
 
-    constructor(souce: Source, bot: OneBot) {
+    constructor(souce: Source, bot: Bot) {
         this.bot = bot
         this.source = souce
         this.target = new Target(this.source)

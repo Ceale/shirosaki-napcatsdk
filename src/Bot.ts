@@ -11,9 +11,9 @@ declare global {
         includes(value: any): boolean
     }
 }
+
 const logger = new Logger("bot")
 
-export type EventCallback<EventData> = (eventData: EventData) => void
 
 export enum EventType {
     Message = "message",
@@ -46,7 +46,7 @@ export enum EventType {
 
 // }
 
-export class OneBot {
+export class Bot {
     private options: {
         url: string,
         debug: boolean
@@ -144,9 +144,9 @@ export class OneBot {
         })
     }
 
-    private eventListenerList = new Map<EventType, Set<EventCallback<any>>>()
+    private eventListenerList = new Map<EventType, Set<(event: any) => void>>()
 
-    public onEvent(eventType: EventType, callback: EventCallback<any>/*, options: EventOptions*/) {
+    public onEvent(eventType: EventType, callback: (event: any) => void/*, options: EventOptions*/) {
         let listenerList = this.eventListenerList.get(eventType)
         listenerList!.add(callback)
     }
@@ -166,7 +166,7 @@ export class OneBot {
         }
     }
 
-    public offEvent(eventType: EventType, callback: EventCallback<any>) {
+    public offEvent(eventType: EventType, callback: (event: any) => void) {
         let listenerList = this.eventListenerList.get(eventType)
         listenerList!.delete(callback)
     }
@@ -222,7 +222,7 @@ export class OneBot {
 
     public sessionList = new Set<Source>()
 
-    public onMessage(callback: EventCallback<MessageEvent>, options?: {
+    public onMessage(callback: (event: MessageEvent) => void, options?: {
         once?: boolean,
         at?: boolean,
         type?: SouceType,
