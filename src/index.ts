@@ -1,5 +1,7 @@
 export * from "./Bot"
+export * from "./MessageEvent"
 export * from "./Message"
 export * from "./MessageSegment"
 export * from "./ModuleLoader"
 export * from "./Util"
+export * from "./Log"
