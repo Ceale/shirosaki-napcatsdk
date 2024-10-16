@@ -1,4 +1,4 @@
-![shirosaki-onebot](https://socialify.git.ci/Ceale/shirosaki-onebot/image?description=1&descriptionEditable=%E6%9E%81%E7%AE%80OneBot%20v11%E6%A1%86%E6%9E%B6&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FCeale%2Fshirosaki-onebot%2Frefs%2Fheads%2Fmain%2Ficon.png&name=1&owner=1&pattern=Diagonal%20Stripes&pulls=1&stargazers=1&theme=Light&)
+![shirosaki-onebot](https://socialify.git.ci/Ceale/shirosaki-onebot/image?description=1&descriptionEditable=%E6%9E%81%E7%AE%80OneBot%20v11%E6%A1%86%E6%9E%B6&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FCeale%2Fshirosaki-onebot%2Fb9aec6e433712c2c516d03dee4014501463fe7aa%2Ficon.png&name=1&owner=1&pattern=Diagonal%20Stripes&pulls=1&stargazers=1&theme=Light)
 
 >[!IMPORTANT] 
 >框架正处于初期开发阶段，readme未完善。
