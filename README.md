@@ -2,7 +2,7 @@
 
 >[!IMPORTANT] 
 >框架正处于初期开发阶段，readme未完善。
-
+>
 >在当前阶段使用可能需要您自行查阅源码。
 
 # Shirosaki OneBot
