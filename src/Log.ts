@@ -1,4 +1,4 @@
-export default class Logger {
+export class Logger {
     private name: string
     constructor(name: string) {
         this.name = name
