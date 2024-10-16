@@ -1,5 +1,5 @@
 import { WebSocket } from "ws"
-import Logger from "./Log"
+import { Logger } from "./Log"
 import { generateRandomHex, wait } from "./Util"
 import { Message } from "./Message"
 import { At, MessageSegmentType, Text } from "./MessageSegment"
