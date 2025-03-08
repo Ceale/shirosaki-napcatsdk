@@ -5,7 +5,7 @@
 >
 >在当前阶段使用可能需要您自行查阅源码。
 
-# Shirosaki NapCatSDK
+# Shirosaki NapCatQQ SDK
 名称来源于白咲花（しろさき はな/Shirosaki Hana），她是我很喜欢的一个角色
 
 极简框架(?)
