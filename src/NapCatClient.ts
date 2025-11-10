@@ -1,11 +1,14 @@
 import EventEmitter from "node:events"
 import { WebSocketManager } from "./WebSocketManager"
-import { AutoBind } from "./util/AutoBind"
+import { BindThis } from "./util/AutoBind"
 import { assert, tryCatch } from "@ceale/util"
 import type { Logger } from "./util/Logger"
 import console from "node:console"
 import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
 import type { EventName } from "./interface/event-name"
+import { NCMessage } from "./service/Message"
+import { NCSelf } from "./service/Self"
+import { LegacyMessageAdapter } from "./service/LegacyMessageAdapter"
 
 
 export interface ClientOption {
@@ -16,7 +19,7 @@ export interface ClientOption {
     logger?: Logger
 }
 
-export class NapCatClient /* extends EventEmitter */ {
+export class NapCatClient {
     private url: string
     private token: string | null
     private debug: boolean
@@ -24,7 +27,6 @@ export class NapCatClient /* extends EventEmitter */ {
     private wsManager: WebSocketManager
 
     constructor(url: string, options?: ClientOption) {
-        // super()
         if (url === undefined) throw new TypeError("url参数是必须的")
         this.url = url
         this.token = options?.token ?? null
@@ -50,27 +52,34 @@ export class NapCatClient /* extends EventEmitter */ {
             },
             this.logger
         )
+
+        this.Message = new NCMessage( this, this.logger, this.debug )
+        this.Self = new NCSelf( this, this.logger, this.debug )
+        this.LegacyMessage = new LegacyMessageAdapter(this, this.logger, this.debug)
     }
 
-    // public connect = async () => {
-    @AutoBind
+    public Message: NCMessage
+    public Self: NCSelf
+    public LegacyMessage: LegacyMessageAdapter
+
+    @BindThis
     public async connect() {
         return await this.wsManager.open()
     }
 
-    @AutoBind
+    @BindThis
     public async disconnect () {
         return await this.wsManager.close()
     }
 
 
-    @AutoBind
+    @BindThis
     public sendData(data: any) {
         this.logger.debug("发送数据", data)
         return this.wsManager.sendData(data)
     }
 
-    @AutoBind
+    @BindThis
     private dataHandler(data: any) {
         this.logger.debug("接收数据", data)
         if (data.hasOwnProperty("post_type")) {
@@ -90,7 +99,7 @@ export class NapCatClient /* extends EventEmitter */ {
         params: ActionParams<T>
     ): Promise<ActionResp<T>>;
     public sendAction(action: string, params?: object): Promise<any>;
-    @AutoBind
+    @BindThis
     public sendAction(action: string, params: object = {}) {
         return new Promise(resolve => {
             const id = (Date.now().toString(36) + Math.random().toString(36).slice(2)).slice(0,12).padEnd(12, "x")
@@ -103,7 +112,7 @@ export class NapCatClient /* extends EventEmitter */ {
         })
     }
 
-    @AutoBind
+    @BindThis
     private actionRespHandler(data: any) {
         this.actionMap.get(data.echo)?.(data)
         this.actionMap.delete(data.echo)
@@ -112,7 +121,7 @@ export class NapCatClient /* extends EventEmitter */ {
     
     private eventMap = new Map<string, Set<(data: any) => void>>()
 
-    @AutoBind
+    @BindThis
     private postDataHandler(data: any) {
         const eventNamePath = []
 
@@ -137,7 +146,7 @@ export class NapCatClient /* extends EventEmitter */ {
 
     public onEvent(handler: (data: any) => void): void;
     public onEvent(eventName: EventName, handler: (data: any) => void): void;
-    @AutoBind
+    @BindThis
     public onEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
         assert<string>(eventName)
@@ -153,7 +162,7 @@ export class NapCatClient /* extends EventEmitter */ {
 
     public offEvent(handler: (data: any) => void): void;
     public offEvent(eventName: string, handler: (data: any) => void): void;
-    @AutoBind
+    @BindThis
     public offEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
         assert<string>(eventName)

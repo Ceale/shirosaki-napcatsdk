@@ -1,4 +1,4 @@
-export const AutoBind = (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+export const BindThis = (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value
     return {
         configurable: true,

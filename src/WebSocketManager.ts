@@ -1,7 +1,7 @@
 import WebSocket from "ws"
 import type { Logger } from "./util/Logger"
 import { type EnumKeys, defineEnum, tryCatch, wait } from "@ceale/util"
-import { AutoBind as BindThis } from "./util/AutoBind"
+import { BindThis } from "./util/AutoBind"
 
 
 const WS_STATE = defineEnum(
