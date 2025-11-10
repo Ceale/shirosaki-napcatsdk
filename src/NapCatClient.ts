@@ -4,6 +4,8 @@ import { AutoBind } from "./util/AutoBind"
 import { assert, tryCatch } from "@ceale/util"
 import type { Logger } from "./util/Logger"
 import console from "node:console"
+import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
+import type { EventName } from "./interface/event-name"
 
 
 export interface ClientOption {
@@ -83,6 +85,11 @@ export class NapCatClient /* extends EventEmitter */ {
 
     private actionMap = new Map<string, ((data: any) => void)>()
 
+    public sendAction<T extends keyof ActionMap>(
+        action: T, 
+        params: ActionParams<T>
+    ): Promise<ActionResp<T>>;
+    public sendAction(action: string, params?: object): Promise<any>;
     @AutoBind
     public sendAction(action: string, params: object = {}) {
         return new Promise(resolve => {
@@ -129,7 +136,7 @@ export class NapCatClient /* extends EventEmitter */ {
     }
 
     public onEvent(handler: (data: any) => void): void;
-    public onEvent(eventName: string, handler: (data: any) => void): void;
+    public onEvent(eventName: EventName, handler: (data: any) => void): void;
     @AutoBind
     public onEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
@@ -142,5 +149,19 @@ export class NapCatClient /* extends EventEmitter */ {
             this.eventMap.set(eventName, eventSet)
         }
         eventSet.add(handler)
+    }
+
+    public offEvent(handler: (data: any) => void): void;
+    public offEvent(eventName: string, handler: (data: any) => void): void;
+    @AutoBind
+    public offEvent(arg1: any, arg2?: any) {
+        const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
+        assert<string>(eventName)
+        assert< (data: any) => void>(handler)
+
+        let eventSet = this.eventMap.get(eventName)
+        if (eventSet) {
+            eventSet.delete(handler)
+        }
     }
 }
