@@ -31,6 +31,8 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
+    "noEmitOnError": false,
+
     "baseUrl": ".",
   },
   "include": [
