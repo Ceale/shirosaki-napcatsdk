@@ -14,4 +14,4 @@
 
 ### 其他
 *项目图标取自[萌娘百科: Nav-wataten3.png](https://mzh.moegirl.org.cn/File:Nav-wataten3.png)并修改，遵循 CC BY-NC-SA CN 许可使用*<br/>
-*如对素材版权方或其他权利方造成侵权，请联系删除*
+*如对素材版权方或其他相关权利方造成侵权，请联系删除*
