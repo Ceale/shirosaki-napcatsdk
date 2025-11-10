@@ -1,4 +1,4 @@
-export * from "./bot"
+export * from "./Bot"
 export * from "./NapCatClient"
 export * from "./WebSocketManager"
 export * from "./MessageEvent"
