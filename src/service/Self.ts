@@ -1,4 +1,4 @@
-import type { Logger } from "~/util/Logger"
+import type { Logger } from "../util/Logger"
 import type { NapCatClient } from "../NapCatClient"
 import { BindThis } from "../util/AutoBind"
 

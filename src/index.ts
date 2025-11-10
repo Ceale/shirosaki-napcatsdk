@@ -1,2 +1,2 @@
-export * from "~/NapCatClient"
-export * from "~/WebSocketManager"
+export * from "./NapCatClient"
+export * from "./WebSocketManager"
