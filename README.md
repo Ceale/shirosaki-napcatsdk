@@ -13,5 +13,7 @@
 ### 使用方法
 
 ### 其他
+![Stargazers over time](https://starchart.cc/Ceale/shirosaki-napcatsdk.svg?background=%23ffffff00&axis=%233178c6&line=%23cca8ee)
+
 *项目图标取自[萌娘百科: Nav-wataten3.png](https://mzh.moegirl.org.cn/File:Nav-wataten3.png)并修改，遵循 CC BY-NC-SA CN 许可使用*<br/>
 *如对素材版权方或其他相关权利方造成侵权，请联系删除*
