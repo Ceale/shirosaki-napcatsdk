@@ -1,4 +1,4 @@
-import type { Logger } from "src/util/Logger"
+import type { Logger } from "~/util/Logger"
 import type { NapCatClient } from "../NapCatClient"
 import { BindThis } from "../util/AutoBind"
 
@@ -24,7 +24,6 @@ export class NCSelf {
     @BindThis
     public async refreshSelfInfo() {
         const data = await this.NCClient.sendAction("get_login_info")
-        console.log(data)
         if (data?.retcode !== 0) return false
         this._selfInfo = data?.data
         return true

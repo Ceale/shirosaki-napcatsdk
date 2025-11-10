@@ -1,6 +1,6 @@
 {
   "name": "shirosaki-napcatsdk",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "Ceale",
   "description": "极简NapCatQQ SDK",
   "repository": {
@@ -9,23 +9,23 @@
   "keywords": ["onebot", "napcat", "qq"],
   "license": "MIT",
   "type": "module",
+  "types": "lib/types/index.d.ts",
   "module": "lib/esm/index.js",
   "main": "lib/cjs/index.js",
-  "types": "lib/types/index.d.ts",
   "files": ["lib"],
   "exports": {
     ".": {
+      "types": "./lib/types/index.d.ts",
       "import": "./lib/esm/index.js",
-      "require": "./lib/cjs/index.js",
-      "types": "./lib/types/index.d.ts"
+      "require": "./lib/cjs/index.js"
     },
     "./package.json": "./package.json"
   },
   "scripts": {
     "test": "tsc",
     "build": "bun run build:esm && bun run build:cjs && bun run build:ts",
-    "build:esm": "bun build --outdir=lib/esm/ --format=esm --target=node --packages=external src/index.ts",
-    "build:cjs": "bun build --outdir=lib/cjs/ --format=cjs --target=node --packages=external src/index.ts",
+    "build:esm": "esbuild --outdir=lib/esm/ --format=esm --target=esnext --bundle --packages=external src/index.ts",
+    "build:cjs": "esbuild --outdir=lib/cjs/ --format=cjs --target=esnext --bundle --packages=external src/index.ts",
     "build:ts": "tsc"
   },
   "dependencies": {
@@ -35,6 +35,7 @@
   "devDependencies": {
     "@types/node": "^22.19.0",
     "@types/ws": "^8.18.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "esbuild": "^0.27.0"
   }
 }

@@ -1,14 +1,14 @@
 import EventEmitter from "node:events"
-import { WebSocketManager } from "./WebSocketManager"
-import { BindThis } from "./util/AutoBind"
+import { WebSocketManager } from "~/WebSocketManager"
+import { BindThis } from "~/util/AutoBind"
 import { assert, tryCatch } from "@ceale/util"
-import type { Logger } from "./util/Logger"
+import type { Logger } from "~/util/Logger"
 import console from "node:console"
 import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
 import type { EventName } from "./interface/event-name"
 import { NCMessage } from "./service/Message"
 import { NCSelf } from "./service/Self"
-import { LegacyMessageAdapter } from "src/legacy/MessageAdapter"
+import { LegacyMessageAdapter } from "./legacy/MessageAdapter"
 
 
 export interface ClientOption {

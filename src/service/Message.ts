@@ -1,6 +1,6 @@
-import type { Logger } from "src/util/Logger"
-import type { NapCatClient } from "src/NapCatClient"
-import { BindThis } from "src/util/AutoBind"
+import type { Logger } from "../util/Logger"
+import type { NapCatClient } from "../NapCatClient"
+import { BindThis } from "../util/AutoBind"
 
 export class NCMessage {
     constructor(
