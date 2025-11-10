@@ -1,6 +1,2 @@
-export * from "./Bot"
 export * from "./NapCatClient"
 export * from "./WebSocketManager"
-export * from "./MessageEvent"
-export * from "./Message"
-export * from "./MessageSegment"
