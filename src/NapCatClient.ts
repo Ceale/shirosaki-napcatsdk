@@ -8,7 +8,7 @@ import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
 import type { EventName } from "./interface/event-name"
 import { NCMessage } from "./service/Message"
 import { NCSelf } from "./service/Self"
-import { LegacyMessageAdapter } from "./service/LegacyMessageAdapter"
+import { LegacyMessageAdapter } from "src/legacy/MessageAdapter"
 
 
 export interface ClientOption {
