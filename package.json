@@ -28,7 +28,7 @@
     "build:ts": "tsc"
   },
   "dependencies": {
-    "@ceale/util": "^1.16.0",
+    "@ceale/util": "latest",
     "ws": "^8.18.3"
   },
   "devDependencies": {
