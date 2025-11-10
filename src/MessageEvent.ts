@@ -1,4 +1,4 @@
-import { Bot, EventType } from "./Bot"
+import { Bot, EventType } from "./bot"
 import { Message } from "./Message"
 
 

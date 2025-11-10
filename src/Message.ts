@@ -17,7 +17,7 @@ export class Message {
     }
 
     getSegment(n: number): MessageSegment {
-        return this.segments[n-1]
+        return this.segments[n-1]!
     }
 
     getSegments(): MessageSegment[] {

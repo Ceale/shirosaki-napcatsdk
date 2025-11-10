@@ -175,4 +175,6 @@ dist
 .DS_Store
 
 
-lib/
+/lib/
+
+/dev/

@@ -1,10 +1,13 @@
-import { WebSocket } from "ws"
-import { Logger } from "./Log"
-import { generateRandomHex, wait } from "./Util"
+// @ts-nocheck
+
+import { WebSocket, type WebSocket as WebSocketType } from "ws"
 import { Message } from "./Message"
 import { At, MessageSegmentType, Text } from "./MessageSegment"
 import { error, log } from "node:console"
 import { Target, SourceType, Source, MessageEvent } from "./MessageEvent"
+import internal from "node:stream"
+import { assert, wait } from "@ceale/util"
+import type { ClientOption } from "./NapCatClient"
 
 declare global {
     interface Array<T> {
@@ -12,16 +15,13 @@ declare global {
     }
 }
 
-const logger = new Logger("bot")
-
-
 export enum EventType {
     Message = "message",
     Notice = "notice",
     Request = "request",
     Meta = "meta"
 }
-
+ 
 // export class NoticeEventData {
 //     constructor() {
         
@@ -45,6 +45,22 @@ export enum EventType {
 //     selfid: number
 
 // }
+
+type MessageEventOption = {
+    once?: boolean
+    at?: boolean
+    type?: SourceType
+    filter?: {
+        groupId?: number[]
+        userId?: number[]
+    }
+}
+
+export class Client {
+    constructor(private options: ClientOption) {
+        new WebSocket("")
+    }
+}
 
 export class Bot {
     private options: {
@@ -82,6 +98,10 @@ export class Bot {
         this.eventListenerList.set(EventType.Notice, new Set())
         this.eventListenerList.set(EventType.Request, new Set())
         this.eventListenerList.set(EventType.Meta, new Set())
+
+        
+        const logger = log4js.getLogger('my-library')
+        logger.info("Library starting up")
     }
 
     public connect(): Promise<void> {
@@ -222,15 +242,7 @@ export class Bot {
 
     public sessionList = new Set<Source>()
 
-    public onMessage(callback: (event: MessageEvent) => void, options?: {
-        once?: boolean,
-        at?: boolean,
-        type?: SourceType,
-        filter?: {
-            groupId?: number[],
-            userId?: number[]
-        }
-    }) {
+    public onMessage(callback: (event: MessageEvent) => void, options?: MessageEventOption) {
         const handle = (eventData: any) => {
             const messageEvent = new MessageEvent(eventData, this)
 
@@ -261,4 +273,8 @@ export class Bot {
         }
         this.onEvent(EventType.Message, handle)
     }
+
+    // public onCommand(commandName: string, ()=>) {
+
+    // }
 }

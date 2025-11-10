@@ -1,13 +1,17 @@
 {
-  "name": "shirosaki-onebot",
-  "version": "0.1.8",
-  "description": "极简OneBot v11框架",
+  "name": "shirosaki-napcatsdk",
+  "version": "0.2.0",
+  "author": "Ceale",
+  "description": "极简NapCatQQ SDK",
+  "repository": {
+    "url": "git+https://github.com/Ceale/shirosaki-napcatsdk.git"
+  },
+  "keywords": ["onebot", "napcat", "qq"],
+  "license": "MIT",
   "type": "module",
   "main": "lib/index.cjs",
   "types": "lib/index.d.ts",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "exports": {
     ".": {
       "import": "./lib/index.mjs",
@@ -18,31 +22,18 @@
   },
   "scripts": {
     "test": "tsc",
-    "build": "unbuild --minify"
-  },
-  "unbuild": {
-    "name": "shirosaki-onebot",
-    "outDir": "lib",
-    "clean": true
-  },
-  "author": "筱莱Ceale",
-  "license": "Apache-2.0",
-  "keywords": [
-    "typescript",
-    "onebot",
-    "onebot-sdk",
-    "onebot11"
-  ],
-  "repository": {
-    "url": "git+https://github.com/Ceale/shirosaki-onebot.git"
-  },
-  "devDependencies": {
-    "@types/node": "^22.7.5",
-    "@types/ws": "^8.5.12",
-    "typescript": "^4.9.4",
-    "unbuild": "^2.0.0"
+    "build": "bun run build:esm && bun run build:cjs && bun run build:ts",
+    "build:esm": "bun build --outdir=lib/esm/ --format=esm --target=node --packages=external src/index.ts",
+    "build:cjs": "bun build --outdir=lib/cjs/ --format=cjs --target=node --packages=external src/index.ts",
+    "build:ts": "tsc"
   },
   "dependencies": {
-    "ws": "^8.18.0"
+    "@ceale/util": "^1.16.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "@types/ws": "^8.18.1",
+    "typescript": "^5.9.3"
   }
 }
