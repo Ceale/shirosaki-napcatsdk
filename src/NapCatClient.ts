@@ -215,6 +215,21 @@ export class NapCatClient {
         eventSet.add(handler)
     }
 
+    // public onEvent(handler: (data: any) => void): void;
+    // public onEvent(eventName: EventName, handler: (data: any) => void): void;
+    @BindThis
+    public onceEvent(arg1: any, arg2?: any) {
+        const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
+        assert<string>(eventName)
+        assert< (data: any) => void>(handler)
+
+        const onceHandler = (data: any) => {
+            this.offEvent(eventName, onceHandler)
+            handler(data)
+        }
+        this.onEvent(eventName, onceHandler)
+    }
+
     // public offEvent(handler: (data: any) => void): void;
     // public offEvent(eventName: string, handler: (data: any) => void): void;
     @BindThis
