@@ -125,11 +125,11 @@ export class NapCatClient {
 
     private actionMap = new Map<string, ((data: any) => void)>()
 
-    public sendAction<T extends keyof ActionMap>(
-        action: T, 
-        params: ActionParams<T>
-    ): Promise<ActionResp<T>>;
-    public sendAction(action: string, params?: object): Promise<any>;
+    // public sendAction<T extends keyof ActionMap>(
+    //     action: T, 
+    //     params: ActionParams<T>
+    // ): Promise<ActionResp<T>>;
+    // public sendAction(action: string, params?: object): Promise<any>;
     @BindThis
     public sendAction(action: string, params: object = {}) {
         return new Promise(resolve => {
@@ -175,8 +175,8 @@ export class NapCatClient {
         this.eventMap.get("all")?.forEach(handler => handler(data))
     }
 
-    public onEvent(handler: (data: any) => void): void;
-    public onEvent(eventName: EventName, handler: (data: any) => void): void;
+    // public onEvent(handler: (data: any) => void): void;
+    // public onEvent(eventName: EventName, handler: (data: any) => void): void;
     @BindThis
     public onEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
@@ -191,8 +191,8 @@ export class NapCatClient {
         eventSet.add(handler)
     }
 
-    public offEvent(handler: (data: any) => void): void;
-    public offEvent(eventName: string, handler: (data: any) => void): void;
+    // public offEvent(handler: (data: any) => void): void;
+    // public offEvent(eventName: string, handler: (data: any) => void): void;
     @BindThis
     public offEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
