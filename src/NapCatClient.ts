@@ -1,7 +1,7 @@
 import EventEmitter from "node:events"
 import { WebSocketManager } from "./WebSocketManager"
 import { BindThis } from "./util/AutoBind"
-import { assert, tryCatch } from "@ceale/util"
+import { assert, defineEnum, tryCatch, type EnumKeys } from "@ceale/util"
 import type { Logger } from "./util/Logger"
 import console from "node:console"
 import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
@@ -26,6 +26,8 @@ export interface NCClientConfig {
     debug?: boolean
 }
 
+export const NC_CLIENT_STATE = defineEnum("OPEN", "CLOSE")
+
 export class NapCatClient {
     // 配置
     private url: string
@@ -34,6 +36,11 @@ export class NapCatClient {
     // 基础服务
     private logger: Logger
     private wsManager: WebSocketManager
+
+    private _state: EnumKeys<typeof NC_CLIENT_STATE> = NC_CLIENT_STATE.CLOSE
+    public get state() {
+        return this._state
+    }
 
     // 功能模块
     public Self: NCSelf
@@ -82,12 +89,18 @@ export class NapCatClient {
 
     @BindThis
     public async connect() {
-        return await this.wsManager.open()
+        if (this.state === NC_CLIENT_STATE.OPEN) return true
+        const success = await this.wsManager.open()
+        if (success) this._state = NC_CLIENT_STATE.OPEN
+        return success
     }
 
     @BindThis
-    public async disconnect () {
-        return await this.wsManager.close()
+    public async close () {
+        if (this.state === NC_CLIENT_STATE.CLOSE) return true
+        const success = await this.wsManager.close()
+        if (success) this._state = NC_CLIENT_STATE.CLOSE
+        return success
     }
 
 
