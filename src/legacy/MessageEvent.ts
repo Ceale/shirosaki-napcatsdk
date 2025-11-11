@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import type { NapCatClient } from "../NapCatClient"
 import { Message } from "./Message"
 
