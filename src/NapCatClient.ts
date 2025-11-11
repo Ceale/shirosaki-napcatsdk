@@ -133,7 +133,7 @@ export class NapCatClient {
     @BindThis
     public sendAction(action: string, params: object = {}) {
         return new Promise(resolve => {
-            const id = (Date.now().toString(36) + Math.random().toString(36).slice(2)).slice(0,12).padEnd(12, "x")
+            const id = (Date.now().toString(36) + Math.random().toString(36).slice(2)).slice(0,16).padEnd(16, "x")
             this.actionMap.set(id, resolve)
             this.sendData({
                 action,
