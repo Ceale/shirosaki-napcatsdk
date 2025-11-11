@@ -4,19 +4,19 @@
     "": {
       "name": "shirosaki-napcatsdk",
       "dependencies": {
-        "@ceale/util": "latest",
-        "esbuild": "^0.27.0",
+        "@ceale/util": "1.17.0",
         "ws": "^8.18.3",
       },
       "devDependencies": {
         "@types/node": "^22.19.0",
         "@types/ws": "^8.18.1",
+        "esbuild": "^0.27.0",
         "typescript": "^5.9.3",
       },
     },
   },
   "packages": {
-    "@ceale/util": ["@ceale/util@1.16.0", "", { "dependencies": { "csstype": "^3.1.3" } }, "sha512-KhA9PYKjJV44se7EOZMr26JTmExAinRN/3Ik5H71wZa9ffcX7D8zIBVhZ9W/EPAqti1DgrfzrJUJK0bmOh+TyA=="],
+    "@ceale/util": ["@ceale/util@1.17.0", "", { "dependencies": { "csstype": "^3.1.3" } }, "sha512-U0c5NSiePp984f4D6RfZoQuxqGd8xgTX7s1i1gxSQRZYCQ/GrXdngDjqQbm1JN0c0x3qkfsjyLQ1nFlbgiQXRw=="],
 
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.27.0", "", { "os": "aix", "cpu": "ppc64" }, "sha512-KuZrd2hRjz01y5JK9mEBSD3Vj3mbCvemhT466rSuJYeE/hjuBrHfjjcjMdTm/sz7au+++sdbJZJmuBwQLuw68A=="],
 
