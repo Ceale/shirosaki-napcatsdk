@@ -11,7 +11,7 @@ import { NCSelf } from "./service/NCSelf"
 import { LegacyMessageAdapter } from "./legacy/MessageAdapter"
 
 
-export interface NCClientOption {
+export interface NCClientConfig {
     /** 连接 NapCat 的 token */
     token?: string | null
     retry?: {
@@ -41,10 +41,10 @@ export class NapCatClient {
 
     /**
      * @param url NapCat 的正向 WS 服务端地址
-     * @param options 配置选项，详见 {@link NCClientOption}
+     * @param config 配置，详见 {@link NCClientConfig}
      */
+    constructor(url: string, config?: NCClientConfig);
     constructor(
-        /** NapCat 的正向 WS 服务端地址 */
         url: string,
         {
             token = null,
@@ -54,7 +54,7 @@ export class NapCatClient {
             } = {},
             logger = console,
             debug = false
-        }: NCClientOption = {}
+        }: NCClientConfig = {}
     ) {
         if (url === undefined) throw new TypeError("url参数是必须的")
         this.url = url
@@ -76,8 +76,8 @@ export class NapCatClient {
             this.logger
         )
 
-        this.Message = new NCMessage( this, this.logger, this.debug )
         this.Self = new NCSelf( this, this.logger, this.debug )
+        this.Message = new NCMessage( this, this.logger, this.debug )
     }
 
     @BindThis
