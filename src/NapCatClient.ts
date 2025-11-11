@@ -6,61 +6,79 @@ import type { Logger } from "./util/Logger"
 import console from "node:console"
 import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
 import type { EventName } from "./interface/event-name"
-import { NCMessage } from "./service/Message"
-import { NCSelf } from "./service/Self"
+import { NCMessage } from "./service/NCMessage"
+import { NCSelf } from "./service/NCSelf"
 import { LegacyMessageAdapter } from "./legacy/MessageAdapter"
 
 
-export interface ClientOption {
-    token?: string
-    retryInterval?: number
-    retryLimit?: number
-    debug?: boolean
+export interface NCClientOption {
+    /** 连接 NapCat 的 token */
+    token?: string | null
+    retry?: {
+        /** 重连间隔(ms) 默认：5ms*/
+        interval?: number
+        /** 重连次数限制 默认：5 */
+        limit?: number
+    }
+    /** 日志器 */
     logger?: Logger
+    /** 是否开启调试模式　调试模式下会输出所有发出和接收到的数据等内容 */
+    debug?: boolean
 }
 
 export class NapCatClient {
+    // 配置
     private url: string
     private token: string | null
     private debug: boolean
+    // 基础服务
     private logger: Logger
     private wsManager: WebSocketManager
 
-    constructor(url: string, options?: ClientOption) {
+    // 功能模块
+    public Self: NCSelf
+    public Message: NCMessage
+
+    /**
+     * @param url NapCat 的正向 WS 服务端地址
+     * @param options 配置选项，详见 {@link NCClientOption}
+     */
+    constructor(
+        /** NapCat 的正向 WS 服务端地址 */
+        url: string,
+        {
+            token = null,
+            retry: {
+                limit = 5,
+                interval = 5000
+            } = {},
+            logger = console,
+            debug = false
+        }: NCClientOption = {}
+    ) {
         if (url === undefined) throw new TypeError("url参数是必须的")
         this.url = url
-        this.token = options?.token ?? null
-        this.debug = options?.debug ?? false
+        this.token = token
+        this.debug = debug
 
-        const baseLogger = options?.logger ?? console
         this.logger = {
-            debug: this.debug ? baseLogger.debug : () => {},
-            info: baseLogger.info,
-            warn: baseLogger.warn,
-            error: baseLogger.error
+            debug: this.debug ? logger.debug : () => {},
+            info: logger.info,
+            warn: logger.warn,
+            error: logger.error
         }
 
-        const headers = {
-            ...(this.token ? { Authorization: this.token } : {})
-        }
+        const headers = { ...(this.token ? { Authorization: this.token } : {}) }
         this.wsManager = new WebSocketManager(
-            [this.url, { headers }],
+            [ this.url, { headers }],
             this.dataHandler,
-            {
-                interval: options?.retryInterval ?? 5000,
-                limit: options?.retryLimit ?? 5
-            },
+            { interval, limit },
             this.logger
         )
 
         this.Message = new NCMessage( this, this.logger, this.debug )
         this.Self = new NCSelf( this, this.logger, this.debug )
-        this.LegacyMessage = new LegacyMessageAdapter(this, this.logger, this.debug)
     }
-
-    public Message: NCMessage
-    public Self: NCSelf
-    public LegacyMessage: LegacyMessageAdapter
 
     @BindThis
     public async connect() {
