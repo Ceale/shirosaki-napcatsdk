@@ -3,6 +3,14 @@ import type { NapCatClient } from "../NapCatClient"
 import { BindThis } from "../util/AutoBind"
 
 export class NCSelf {
+    
+    constructor(
+        private NCClient: NapCatClient,
+        private logger: Logger,
+        private debug: any
+    ) {
+        NCClient.onEvent("meta_event.lifecycle.connect", this.refreshSelfInfo)
+    }
 
     private _selfInfo?: {
         user_id: number,
@@ -13,13 +21,6 @@ export class NCSelf {
         return this._selfInfo
     }
 
-    constructor(
-        private NCClient: NapCatClient,
-        private logger: Logger,
-        private debug: any
-    ) {
-        NCClient.onEvent("meta_event.lifecycle.connect", this.refreshSelfInfo)
-    }
 
     @BindThis
     public async refreshSelfInfo() {
