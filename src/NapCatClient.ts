@@ -14,15 +14,24 @@ import { LegacyMessageAdapter } from "./legacy/MessageAdapter"
 export interface NCClientConfig {
     /** 连接 NapCat 的 token */
     token?: string | null
+    /** 默认 `5000`。超时时长`(ms)`，为`-1`将不限时地等待。
+     * 
+     * 用于等待sendAction的响应、初次连接后等待`meta_event.connect`等 */
+    timeout?: number
+    /** 重连设置 */
     retry?: {
-        /** 重连间隔(ms) 默认：5ms*/
+        /** 默认 `5000`。重连间隔`(ms)` */
         interval?: number
-        /** 重连次数限制 默认：5 */
+        /** 默认 `5`。重连次数限制。
+         * 
+         * 为`0`则不尝试重连，为`-1`则不限次数地尝试重连 */
         limit?: number
     }
-    /** 日志器 */
+    /** 默认 `console`。日志器 */
     logger?: Logger
-    /** 是否开启调试模式　调试模式下会输出所有发出和接收到的数据等内容 */
+    /** 默认 `false`。是否开启调试模式。
+     * 
+     * 调试模式下会输出所有发出和接收到的数据等内容 */
     debug?: boolean
 }
 
@@ -33,6 +42,7 @@ export class NapCatClient {
     private url: string
     private token: string | null
     private debug: boolean
+    private timeout: number
     // 基础服务
     private logger: Logger
     private wsManager: WebSocketManager
@@ -55,9 +65,10 @@ export class NapCatClient {
         url: string,
         {
             token = null,
+            timeout = 5000,
             retry: {
-                limit = 5,
-                interval = 5000
+                interval = 5000,
+                limit = 5
             } = {},
             logger = console,
             debug = false
@@ -67,6 +78,7 @@ export class NapCatClient {
         this.url = url
         this.token = token
         this.debug = debug
+        this.timeout = timeout
 
         this.logger = {
             debug: this.debug ? logger.debug : () => {},
@@ -80,7 +92,8 @@ export class NapCatClient {
             [ this.url, { headers }],
             this.dataHandler,
             { interval, limit },
-            this.logger
+            this.logger,
+            this.timeout
         )
 
         this.Self = new NCSelf( this, this.logger, this.debug )
@@ -140,6 +153,17 @@ export class NapCatClient {
                 params,
                 echo: id
             })
+            if (this.timeout !== -1) setTimeout(() => {
+                this.actionMap.delete(id)
+                resolve({
+                    status: "timeout",
+                    retcode: 1408,
+                    mas: "action timeout",
+                    wording: `Action "${action}" 响应超时 (${this.timeout}ms)`,
+                    data: {},
+                    echo: id
+                })
+            }, this.timeout)
         })
     }
 

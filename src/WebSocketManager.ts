@@ -23,7 +23,8 @@ export class WebSocketManager {
             interval: number
             limit: number
         },
-        private logger: Logger
+        private logger: Logger,
+        private timeout: number
     ) {}
 
     /** WebSocketManager状态 */
@@ -93,8 +94,7 @@ export class WebSocketManager {
     }
 
     /**
-     * 断开成功返回true，失败返回false。如果当前已经是断开的，则返回true
-     * 
+     * 断开成功返回true。如果当前已经是断开的，则返回true
      */
     @BindThis
     public async close() {
@@ -135,10 +135,12 @@ export class WebSocketManager {
     
             this.ws.addEventListener("open", () => {
 
-                this.waitActiveTimeout = setTimeout(() => {
-                    this.logger.warn("建立连接时发生错误：等待超时")
-                    this.ws?.close()
-                }, 5 * 1000)
+                if (this.timeout !== -1) {
+                    this.waitActiveTimeout = setTimeout(() => {
+                        this.logger.warn("建立连接时发生错误：等待超时")
+                        this.ws?.close()
+                    }, this.timeout)
+                }
 
                 this.ws?.addEventListener("message", this.onceMsg, { once: true })
             })
@@ -149,15 +151,16 @@ export class WebSocketManager {
     /**
      * 发送数据
      * @param data 任意js对象
-     * @returns 
+     * @returns 发送成功返回true，失败返回false
      */
     @BindThis
     public sendData(data: any) {
         if (!this.ws) {
             this.logger.warn("发送数据时发生错误：WebSocket暂未连接")
-            return
+            return false
         }
         this.ws.send(JSON.stringify(data))
+        return true
     }
 
     @BindThis
