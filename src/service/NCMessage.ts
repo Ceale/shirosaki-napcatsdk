@@ -12,7 +12,7 @@ interface NCMessageConfig {
     debug?: boolean
 }
 
-export class NCMessage implements AAAA {
+export class NCMessage {
 
     private readonly NCClient: NapCatClient
     private readonly Logger: Logger
