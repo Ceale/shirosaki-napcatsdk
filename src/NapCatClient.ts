@@ -1,7 +1,7 @@
 import EventEmitter from "node:events"
 import { WebSocketManager } from "./WebSocketManager"
 import { BindThis } from "./util/AutoBind"
-import { assert, defineEnum, tryCatch, type EnumKeys } from "@ceale/util"
+import { assert, defineEnum, tryCatch, type anyobject, type EnumKeys } from "@ceale/util"
 import type { Logger } from "./util/Logger"
 import console from "node:console"
 import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
@@ -145,7 +145,7 @@ export class NapCatClient {
     // public sendAction(action: string, params?: object): Promise<any>;
     @BindThis
     public sendAction(action: string, params: object = {}) {
-        return new Promise(resolve => {
+        return new Promise<anyobject>(resolve => {
             const id = (Date.now().toString(36) + Math.random().toString(36).slice(2)).slice(0,16).padEnd(16, "x")
             this.actionMap.set(id, resolve)
             this.sendData({
