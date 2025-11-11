@@ -96,7 +96,7 @@ export class NapCatClient {
             this.timeout
         )
 
-        this.Self = new NCSelf( this, this.logger, this.debug )
+        this.Self = new NCSelf({ NCClient: this, Logger: this.logger }, { debug: this.debug })
         this.Message = new NCMessage({ NCClient: this, Logger: this.logger }, { debug: this.debug })
     }
 
