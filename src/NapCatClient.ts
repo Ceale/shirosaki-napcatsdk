@@ -41,7 +41,7 @@ export class NapCatClient {
 
     /**
      * @param url NapCat 的正向 WS 服务端地址
-     * @param config 配置，详见 {@link NCClientConfig}
+     * @param config 配置项，详见 {@link NCClientConfig}
      */
     constructor(url: string, config?: NCClientConfig);
     constructor(
@@ -77,7 +77,7 @@ export class NapCatClient {
         )
 
         this.Self = new NCSelf( this, this.logger, this.debug )
-        this.Message = new NCMessage( this, this.logger, this.debug )
+        this.Message = new NCMessage({ NCClient: this, Logger: this.logger }, { debug: this.debug })
     }
 
     @BindThis
