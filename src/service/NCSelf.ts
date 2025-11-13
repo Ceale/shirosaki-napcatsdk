@@ -105,7 +105,7 @@ export class NCSelf {
     public async refreshInfo() {
         const data = await this.NCClient.sendAction("get_login_info")
         if (data?.retcode !== 0) return false
-        this._info = data?.data
+        this._info = data?.data　　
         return true
     }
 
