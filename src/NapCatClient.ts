@@ -8,7 +8,6 @@ import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
 import type { EventName } from "./interface/event-name"
 import { NCMessage } from "./service/NCMessage"
 import { NCSelf } from "./service/NCSelf"
-import { LegacyMessageAdapter } from "./legacy/MessageAdapter"
 
 
 export interface NCClientConfig {
@@ -53,7 +52,7 @@ export class NapCatClient {
     }
 
     // 功能模块
-    public Self: NCSelf
+    // public Self: NCSelf
     public Message: NCMessage
 
     /**
@@ -199,8 +198,8 @@ export class NapCatClient {
         this.eventMap.get("all")?.forEach(handler => handler(data))
     }
 
-    // public onEvent(handler: (data: any) => void): void;
-    // public onEvent(eventName: EventName, handler: (data: any) => void): void;
+    public onEvent(handler: (data: any) => void): void;
+    public onEvent(eventName: string, handler: (data: any) => void): void;
     @BindThis
     public onEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
@@ -215,8 +214,8 @@ export class NapCatClient {
         eventSet.add(handler)
     }
 
-    // public onEvent(handler: (data: any) => void): void;
-    // public onEvent(eventName: EventName, handler: (data: any) => void): void;
+    public onceEvent(handler: (data: any) => void): void;
+    public onceEvent(eventName: string, handler: (data: any) => void): void;
     @BindThis
     public onceEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
@@ -230,8 +229,8 @@ export class NapCatClient {
         this.onEvent(eventName, onceHandler)
     }
 
-    // public offEvent(handler: (data: any) => void): void;
-    // public offEvent(eventName: string, handler: (data: any) => void): void;
+    public offEvent(handler: (data: any) => void): void;
+    public offEvent(eventName: string, handler: (data: any) => void): void;
     @BindThis
     public offEvent(arg1: any, arg2?: any) {
         const [ eventName, handler ] = arg2 ? [ arg1, arg2 ] :  [ "all", arg2 ]
