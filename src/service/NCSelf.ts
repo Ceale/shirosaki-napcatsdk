@@ -87,33 +87,9 @@ export class NCSelf {
     // private _a
     public getAvatar() {
         const size = 0 // 原图
-        const url = `https://thirdqq.qlogo.cn/g?b=sdk&s=${size}&nk=${user_id}`
+        const url = `https://thirdqq.qlogo.cn/g?b=sdk&s=${size}&nk=${this.user_id}`
     }   
 
-    // 1
-
-    private _info?: {
-        user_id: number,
-        nickname: string,
-    }
-
-    public get info() {
-        return this._info
-    }
-
-    @BindThis
-    public async refreshInfo() {
-        const data = await this.NCClient.sendAction("get_login_info")
-        if (data?.retcode !== 0) return false
-        this._info = data?.data　　
-        return true
-    }
-
-    public async setInfo(/* ...code... */) {
-        // ...code...
-    }
-
-    // 2
     
     public info?: {
         user_id: number,
