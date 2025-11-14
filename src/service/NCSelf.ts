@@ -1,5 +1,5 @@
-import type { Logger } from "../util/Logger"
-import { NC_CLIENT_STATE, type NapCatClient } from "../NapCatClient"
+import type { Logger } from "../interface/Logger"
+import { NapcatClientState, type NapCatClient } from "../NapCatClient"
 import { BindThis } from "../util/AutoBind"
 import { assert } from "@ceale/util"
 
@@ -40,7 +40,7 @@ export class NCSelf {
         this.debug = debug
         
         this.waitReady = new Promise(async resolve => {
-            if (this.NCClient.state === NC_CLIENT_STATE.OPEN) {
+            if (this.NCClient.state === NapcatClientState.OPEN) {
                 const { data } = await this.NCClient.sendAction("get_login_info")
                 this._user_id = data.user_id
                 await this.regetInfo()

@@ -1,16 +1,16 @@
 import WebSocket from "ws"
-import type { Logger } from "./util/Logger"
+import type { Logger } from "./interface/Logger"
 import { type EnumKeys, defineEnum, tryCatch, wait } from "@ceale/util"
 import { BindThis } from "./util/AutoBind"
 
 
-const WS_STATE = defineEnum(
+const WebsocketState = defineEnum(
     "CONNECT",
     "ACTIVE",
     "CLOSE"
 )
 
-const WSM_STATE = defineEnum(
+const WebsocketManagerState = defineEnum(
     "OPEN",
     "CLOSE"
 )
@@ -28,9 +28,9 @@ export class WebSocketManager {
     ) {}
 
     /** WebSocketManager状态 */
-    public wsmState: EnumKeys<typeof WSM_STATE> = WSM_STATE.CLOSE
+    public wsmState: EnumKeys<typeof WebsocketManagerState> = WebsocketManagerState.CLOSE
     /** WebSocketManager状态判断 */
-    private wsmStateIs = (value: EnumKeys<typeof WSM_STATE>) => this.wsmState === value
+    private wsmStateIs = (value: EnumKeys<typeof WebsocketManagerState>) => this.wsmState === value
     /** 等待关闭的Promise */
     private waitCloseResolve?: () => void
 
@@ -42,14 +42,14 @@ export class WebSocketManager {
         this.logger.debug("@WebSocketManager.open()")
         
         // 如果已经连接，则返回true
-        if (this.wsmState === WSM_STATE.OPEN) return true
+        if (this.wsmState === WebsocketManagerState.OPEN) return true
         // 设置状态
-        this.wsmState = WSM_STATE.OPEN
+        this.wsmState = WebsocketManagerState.OPEN
         // 调用连接函数
 
         const isConnect = await this.connect()
         // 如果状态变为关闭，则返回false
-        if (this.wsmStateIs(WSM_STATE.CLOSE)) {
+        if (this.wsmStateIs(WebsocketManagerState.CLOSE)) {
             this.waitCloseResolve?.()
             return false
         // 没连接成功则进入重连
@@ -81,7 +81,7 @@ export class WebSocketManager {
             await wait(this.retryCfg.interval)
 
             // 如果状态变为关闭，则返回false，避免进入重连
-            if (this.wsmStateIs(WSM_STATE.CLOSE)) {
+            if (this.wsmStateIs(WebsocketManagerState.CLOSE)) {
                 this.waitCloseResolve?.()
                 return false
             }
@@ -101,10 +101,10 @@ export class WebSocketManager {
         this.logger.debug("@WebSocketManager.close()")
         
         // 如果已经关闭，则返回true
-        if (this.wsmState === WSM_STATE.CLOSE) {
+        if (this.wsmState === WebsocketManagerState.CLOSE) {
             return true
         }
-        this.wsmState = WSM_STATE.CLOSE
+        this.wsmState = WebsocketManagerState.CLOSE
         
         // 关闭ws对象
         this.ws?.close()
@@ -116,7 +116,7 @@ export class WebSocketManager {
     }
 
     /** WebSocket状态 */
-    public wsState: EnumKeys<typeof WS_STATE> = WS_STATE.CLOSE
+    public wsState: EnumKeys<typeof WebsocketState> = WebsocketState.CLOSE
     private ws: WebSocket | null = null
     /** 等待WS连接完成（成功或失败）*/
     private waitActiveResolve?: (value: boolean) => void
@@ -129,7 +129,7 @@ export class WebSocketManager {
 
             // 创建ws对象
             this.ws = new WebSocket(...this.wsParams)
-            this.wsState = WS_STATE.CONNECT
+            this.wsState = WebsocketState.CONNECT
             this.waitActiveResolve = resolve
             this.logger.info("正在建立WebSocket连接")
     
@@ -184,7 +184,7 @@ export class WebSocketManager {
 
     @BindThis
     private onActive() {
-        this.wsState = WS_STATE.ACTIVE
+        this.wsState = WebsocketState.ACTIVE
         this.waitActiveResolve?.(true)
         this.ws?.addEventListener("message", this.onMsg)
         this.logger.info("连接成功")
@@ -205,20 +205,20 @@ export class WebSocketManager {
     @BindThis
     private onClose(event: WebSocket.WebSocketEventMap["close"]) {
         clearTimeout(this.waitActiveTimeout)
-        if (this.wsState === WS_STATE.CONNECT) {
+        if (this.wsState === WebsocketState.CONNECT) {
             this.waitActiveResolve?.(false)
             this.logger.warn("建立连接失败：", event.code, event.reason)
-        } else if (this.wsState === WS_STATE.ACTIVE) {
-            if (this.wsmState === WSM_STATE.OPEN) {
+        } else if (this.wsState === WebsocketState.ACTIVE) {
+            if (this.wsmState === WebsocketManagerState.OPEN) {
                 this.logger.warn("连接已断开：", event.code, event.reason)
                 this.retry()        
-            } else if (this.wsmState === WSM_STATE.CLOSE) {
+            } else if (this.wsmState === WebsocketManagerState.CLOSE) {
                 this.waitCloseResolve?.()
             }
             
         }
         
-        this.wsState = WS_STATE.CLOSE
+        this.wsState = WebsocketState.CLOSE
         this.ws = null
     }
 }

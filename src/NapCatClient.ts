@@ -2,7 +2,7 @@ import EventEmitter from "node:events"
 import { WebSocketManager } from "./WebSocketManager"
 import { BindThis } from "./util/AutoBind"
 import { assert, defineEnum, tryCatch, type anyobject, type EnumKeys } from "@ceale/util"
-import type { Logger } from "./util/Logger"
+import type { Logger } from "./interface/Logger"
 import console from "node:console"
 import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
 import type { EventName } from "./interface/event-name"
@@ -34,7 +34,7 @@ export interface NCClientConfig {
     debug?: boolean
 }
 
-export const NC_CLIENT_STATE = defineEnum("OPEN", "CLOSE")
+export const NapcatClientState = defineEnum("OPEN", "CLOSE")
 
 export class NapCatClient {
     // 配置
@@ -46,7 +46,7 @@ export class NapCatClient {
     private logger: Logger
     private wsManager: WebSocketManager
 
-    private _state: EnumKeys<typeof NC_CLIENT_STATE> = NC_CLIENT_STATE.CLOSE
+    private _state: EnumKeys<typeof NapcatClientState> = NapcatClientState.CLOSE
     public get state() {
         return this._state
     }
@@ -101,17 +101,17 @@ export class NapCatClient {
 
     @BindThis
     public async connect() {
-        if (this.state === NC_CLIENT_STATE.OPEN) return true
+        if (this.state === NapcatClientState.OPEN) return true
         const success = await this.wsManager.open()
-        if (success) this._state = NC_CLIENT_STATE.OPEN
+        if (success) this._state = NapcatClientState.OPEN
         return success
     }
 
     @BindThis
     public async close () {
-        if (this.state === NC_CLIENT_STATE.CLOSE) return true
+        if (this.state === NapcatClientState.CLOSE) return true
         const success = await this.wsManager.close()
-        if (success) this._state = NC_CLIENT_STATE.CLOSE
+        if (success) this._state = NapcatClientState.CLOSE
         return success
     }
 
