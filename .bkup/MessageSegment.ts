@@ -141,7 +141,7 @@ export class Mface extends MessageSegment {
             type: "image",
             data: {
                 file: this.file,
-                sub_type: 1
+                 : 1
             }
         }
     }
