@@ -24,10 +24,10 @@ export class Message {
 
     static create(text: string): Message;
     static create(...segments: MessageSegment[]): Message;
-    static create(params1: string | MessageSegment, ...params: MessageSegment[]): Message {
-        return (typeof params1 === "string")
-            ? new Message([new TextSegment(params1)])
-            : new Message([params1, ...params])
+    static create(param1: string | MessageSegment, ...params: MessageSegment[]): Message {
+        return (typeof param1 === "string")
+            ? new Message([new TextSegment(param1)])
+            : new Message([param1, ...params])
     }
 
     static fromJSON(json: anyobject[] | string): Message {
