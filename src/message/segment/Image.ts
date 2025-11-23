@@ -4,7 +4,7 @@ import { MessageSegment } from "../MessageSegment"
 export class Image extends MessageSegment {
 
     constructor(
-        public data: string | Buffer,
+        public urlOrData: string | Buffer,
         public summary?: string
     ) {
         super()
@@ -18,9 +18,9 @@ export class Image extends MessageSegment {
     }
 
     toJSON() {
-        const data = Buffer.isBuffer(this.data)
-            ? "data:application/octet-stream;base64," + this.data.toString("base64")
-            : this.data
+        const data = Buffer.isBuffer(this.urlOrData)
+            ? "data:application/octet-stream;base64," + this.urlOrData.toString("base64")
+            : this.urlOrData
         return {
             type: "image",
             data: {
@@ -31,10 +31,10 @@ export class Image extends MessageSegment {
     }
 
     async getData() {
-        if (Buffer.isBuffer(this.data)) {
-            return this.data
+        if (Buffer.isBuffer(this.urlOrData)) {
+            return this.urlOrData
         } else {
-            const [ data ] = await tryCatch((await fetch(this.data)).arrayBuffer())
+            const [ data ] = await tryCatch((await fetch(this.urlOrData)).arrayBuffer())
             if (data) {
                 return Buffer.from(data)
             } else {
@@ -44,6 +44,6 @@ export class Image extends MessageSegment {
     }
 
     clone() {
-        return new Image(this.data, this.summary)
+        return new Image(this.urlOrData, this.summary)
     }
 }
