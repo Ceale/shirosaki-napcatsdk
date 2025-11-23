@@ -53,6 +53,6 @@ export class Rps extends MessageSegment {
     }
 
     equals(other: Rps) {
-        return this.state === other.state
+        return this.state === other?.state
     }
 }

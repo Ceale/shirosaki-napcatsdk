@@ -28,6 +28,6 @@ export class At extends MessageSegment {
     }
 
     equals(other: At) {
-        return this.target === other.target
+        return this.target === other?.target
     }
 }

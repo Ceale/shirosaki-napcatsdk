@@ -52,6 +52,6 @@ export class Sticker extends MessageSegment {
     }
 
     equals(other: Sticker) {
-        return this.urlOrData === other.urlOrData
+        return this.urlOrData === other?.urlOrData
     }
 }

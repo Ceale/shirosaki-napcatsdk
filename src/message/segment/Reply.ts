@@ -25,6 +25,6 @@ export class Reply extends MessageSegment {
     }
 
     equals(other: Reply) {
-        return this.id === other.id
+        return this.id === other?.id
     }
 }

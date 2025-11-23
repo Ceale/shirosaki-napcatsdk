@@ -32,6 +32,6 @@ export class Poke extends MessageSegment {
     }
 
     equals(other: Poke) {
-        return this.type === other.type && this.id === other.id
+        return this.type === other?.type && this.id === other?.id
     }
 }

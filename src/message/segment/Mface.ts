@@ -47,7 +47,7 @@ export class Mface extends MessageSegment {
     }
 
     equals(other: Mface) {
-        return this.emojiPackageId === other.emojiPackageId
-            && this.emojiId === other.emojiId
+        return this.emojiPackageId === other?.emojiPackageId
+            && this.emojiId === other?.emojiId
     }
 }

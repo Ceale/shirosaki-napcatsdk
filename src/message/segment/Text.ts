@@ -25,6 +25,6 @@ export class Text extends MessageSegment {
     }
 
     equals(other: Text) {
-        return this.text === other.text
+        return this.text === other?.text
     }
 }

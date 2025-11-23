@@ -51,6 +51,6 @@ export class Image extends MessageSegment {
     }
 
     equals(other: Image) {
-        return this.urlOrData === other.urlOrData
+        return this.urlOrData === other?.urlOrData
     }
 }

@@ -27,6 +27,6 @@ export class Face extends MessageSegment {
     }
 
     equals(other: Face) {
-        return this.id === other.id
+        return this.id === other?.id
     }
 }

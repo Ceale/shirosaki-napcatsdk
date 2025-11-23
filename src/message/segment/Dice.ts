@@ -26,6 +26,6 @@ export class Dice extends MessageSegment {
     }
 
     equals(other: Dice) {
-        return this.state === other.state
+        return this.state === other?.state
     }
 }
