@@ -1,10 +1,15 @@
 import { MessageSegment } from "./MessageSegment"
-import { TextSegment } from "./message-segment/TextSegment"
-import { AtSegment } from "./message-segment/AtSegment"
 import { Message } from "./Message"
-import { ReplySegment } from "./message-segment/ReplySegment"
-import { FaceSegment } from "./message-segment/FaceSegment"
-import { StickerSegment } from "./message-segment/StickerSegment"
+import { Text } from "./segment/Text"
+import { At } from "./segment/At"
+import { Reply } from "./segment/Reply"
+import { Face } from "./segment/Face"
+import { Sticker } from "./segment/Sticker"
+import { Image } from "./segment/Image"
+import { Mface } from "./segment/Mface"
+import { Rps } from "./segment/Rps"
+import { Dice } from "./segment/Dice"
+import { Poke } from "./segment/Poke"
 
 export class MessageBuilder {
     private segments: MessageSegment[] = []
@@ -13,28 +18,47 @@ export class MessageBuilder {
         return new Message(this.segments)
     }
 
-    text(...params: ConstructorParameters<typeof TextSegment>) {
-        this.segments.push(new TextSegment(...params))
+    text(...params: ConstructorParameters<typeof Text>) {
+        this.segments.push(new Text(...params))
+        return this
+    }
+    at(...params: ConstructorParameters<typeof At>) {
+        this.segments.push(new At(...params))
+        return this
+    }
+    reply(...params: ConstructorParameters<typeof Reply>) {
+        this.segments.push(new Reply(...params))
         return this
     }
 
-    at(...params: ConstructorParameters<typeof AtSegment>) {
-        this.segments.push(new AtSegment(...params))
+    face(...params: ConstructorParameters<typeof Face>) {
+        this.segments.push(new Face(...params))
+        return this
+    }
+    rps(...params: ConstructorParameters<typeof Rps>) {
+        this.segments.push(new Rps(...params))
+        return this
+    }
+    dice(...params: ConstructorParameters<typeof Dice>) {
+        this.segments.push(new Dice(...params))
         return this
     }
 
-    reply(...params: ConstructorParameters<typeof ReplySegment>) {
-        this.segments.push(new ReplySegment(...params))
+    image(...params: ConstructorParameters<typeof Image>) {
+        this.segments.push(new Image(...params))
         return this
     }
-
-    face(...params: ConstructorParameters<typeof FaceSegment>) {
-        this.segments.push(new FaceSegment(...params))
+    sticker(...params: ConstructorParameters<typeof Sticker>) {
+        this.segments.push(new Sticker(...params))
         return this
     }
-
-    sticker(...params: ConstructorParameters<typeof StickerSegment>) {
-        this.segments.push(new StickerSegment(...params))
+    mface(...params: ConstructorParameters<typeof Mface>) {
+        this.segments.push(new Mface(...params))
+        return this
+    }
+    
+    poke(...params: ConstructorParameters<typeof Poke>) {
+        this.segments.push(new Poke(...params))
         return this
     }
 }
