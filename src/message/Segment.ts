@@ -30,7 +30,7 @@ export class Segment {
 
             case "image": 
                 if (json?.data?.sub_type === 1) return Sticker.fromJSON(json)
-                if (Object.hasOwn(json, "emoji_id")) return Mface.fromJSON(json)
+                if (Object.hasOwn(json?.data ?? {}, "emoji_id")) return Mface.fromJSON(json)
                 return Image.fromJSON(json)
 
             case "poke":
