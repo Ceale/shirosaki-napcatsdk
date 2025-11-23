@@ -5,6 +5,7 @@ import { randomBytes } from "node:crypto"
 export class Mface extends MessageSegment {
 
     public key: string = randomBytes(8).toString("hex")
+    public url?: string
     
     constructor(
         public emojiId: string,
@@ -21,6 +22,7 @@ export class Mface extends MessageSegment {
             json?.data?.summary ?? undefined
         )
         obj.key = json?.data?.key ?? obj.key
+        obj.url = json?.data?.url ?? obj.url
         return obj
     }
 
