@@ -23,7 +23,7 @@ const fileList1 = fileList.filter(file => {
 })
 
 const exportStr = fileList1.map(file => {
-    return `export * from "${ "./" + file.removePrefix("src/") }";`
+    return `export * from "${ "./" + file.removePrefix("src/") }"`
 })
 
 exportStr.push(`/**`)
