@@ -23,6 +23,10 @@ export class Face extends MessageSegment {
     }
 
     clone() {
-        return new Face(this.id, this.rawData)
+        return new Face(this.id, JSON.parse(JSON.stringify(this.rawData)))
+    }
+
+    equals(other: Face) {
+        return this.id === other.id
     }
 }

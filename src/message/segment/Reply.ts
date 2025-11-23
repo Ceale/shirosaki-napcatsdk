@@ -23,4 +23,8 @@ export class Reply extends MessageSegment {
     clone() {
         return new Reply(this.id)
     }
+
+    equals(other: Reply) {
+        return this.id === other.id
+    }
 }

@@ -23,4 +23,8 @@ export class Text extends MessageSegment {
     clone() {
         return new Text(this.text)
     }
+
+    equals(other: Text) {
+        return this.text === other.text
+    }
 }

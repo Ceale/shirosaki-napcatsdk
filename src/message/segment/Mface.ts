@@ -7,8 +7,8 @@ export class Mface extends MessageSegment {
     public key: string = randomBytes(8).toString("hex")
     
     constructor(
-        public emojiPackageId: string,
         public emojiId: string,
+        public emojiPackageId: string,
         public summary?: string
     ) {
         super()
@@ -44,5 +44,10 @@ export class Mface extends MessageSegment {
         )
         obj.key = this.key
         return obj
+    }
+
+    equals(other: Mface) {
+        return this.emojiPackageId === other.emojiPackageId
+            && this.emojiId === other.emojiId
     }
 }

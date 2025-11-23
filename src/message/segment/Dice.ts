@@ -24,4 +24,8 @@ export class Dice extends MessageSegment {
     clone() {
         return new Dice(this.state)
     }
+
+    equals(other: Dice) {
+        return this.state === other.state
+    }
 }

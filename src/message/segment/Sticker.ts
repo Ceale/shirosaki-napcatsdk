@@ -47,4 +47,8 @@ export class Sticker extends MessageSegment {
     clone() {
         return new Sticker(this.urlOrData, this.summary)
     }
+
+    equals(other: Sticker) {
+        return this.urlOrData === other.urlOrData
+    }
 }

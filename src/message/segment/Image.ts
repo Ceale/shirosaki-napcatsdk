@@ -46,4 +46,8 @@ export class Image extends MessageSegment {
     clone() {
         return new Image(this.urlOrData, this.summary)
     }
+
+    equals(other: Image) {
+        return this.urlOrData === other.urlOrData
+    }
 }

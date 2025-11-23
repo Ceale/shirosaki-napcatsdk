@@ -26,4 +26,8 @@ export class At extends MessageSegment {
     clone() {
         return new At(this.target)
     }
+
+    equals(other: At) {
+        return this.target === other.target
+    }
 }

@@ -51,4 +51,8 @@ export class Rps extends MessageSegment {
     clone() {
         return new Rps(this.state)
     }
+
+    equals(other: Rps) {
+        return this.state === other.state
+    }
 }

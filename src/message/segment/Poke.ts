@@ -30,4 +30,8 @@ export class Poke extends MessageSegment {
     clone() {
         return new Poke(this.type, this.id)
     }
+
+    equals(other: Poke) {
+        return this.type === other.type && this.id === other.id
+    }
 }
