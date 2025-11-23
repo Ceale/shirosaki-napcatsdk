@@ -177,7 +177,11 @@ export class WebSocketManager {
             this.dataHandler(data)
             this.onActive()
         } else {
-            this.logger.warn("建立连接时发生错误：首个数据包不是 OneBot.meta_event.connect")
+            if (data?.status !== undefined) {
+                this.logger.warn(`建立连接时发生错误：`, data)
+            } else {
+                this.logger.warn("建立连接时发生错误：首个数据包不是 OneBot.meta_event.connect")
+            }
             this.ws?.close()
         }
     }
