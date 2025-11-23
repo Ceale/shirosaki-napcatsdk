@@ -44,7 +44,10 @@ export class Image extends MessageSegment {
     }
 
     clone() {
-        return new Image(this.urlOrData, this.summary)
+        return new Image(
+            Buffer.isBuffer(this.urlOrData) ? Buffer.from(this.urlOrData) : this.urlOrData,
+            this.summary
+        )
     }
 
     equals(other: Image) {

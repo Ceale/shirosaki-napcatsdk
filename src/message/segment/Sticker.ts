@@ -45,7 +45,10 @@ export class Sticker extends MessageSegment {
     }
 
     clone() {
-        return new Sticker(this.urlOrData, this.summary)
+        return new Sticker(
+            Buffer.isBuffer(this.urlOrData) ? Buffer.from(this.urlOrData) : this.urlOrData,
+            this.summary
+        )
     }
 
     equals(other: Sticker) {
