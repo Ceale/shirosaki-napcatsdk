@@ -19,4 +19,8 @@ export class Reply extends MessageSegment {
     static fromJSON(obj: anyobject) {
         return new this(obj?.data?.id ?? "0")
     }
+
+    clone() {
+        return new Reply(this.id)
+    }
 }

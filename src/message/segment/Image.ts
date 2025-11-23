@@ -42,4 +42,8 @@ export class Image extends MessageSegment {
             }
         }
     }
+
+    clone() {
+        return new Image(this.data, this.summary)
+    }
 }

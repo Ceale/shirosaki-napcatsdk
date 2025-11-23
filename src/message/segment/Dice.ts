@@ -6,6 +6,11 @@ export class Dice extends MessageSegment {
     constructor(public state?: 1|2|3|4|5|6) {
         super()
     }
+    
+    static fromJSON(json: anyobject) {
+        const obj = new this(json?.data?.result ?? undefined)
+        return obj
+    }
 
     toJSON() {
         return {
@@ -16,8 +21,7 @@ export class Dice extends MessageSegment {
         }
     }
 
-    static fromJSON(json: anyobject) {
-        const obj = new this(json?.data?.result ?? undefined)
-        return obj
+    clone() {
+        return new Dice(this.state)
     }
 }

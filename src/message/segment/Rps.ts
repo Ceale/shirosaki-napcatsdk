@@ -47,4 +47,8 @@ export class Rps extends MessageSegment {
         const obj = new this(state)
         return obj
     }
+
+    clone() {
+        return new Rps(this.state)
+    }
 }

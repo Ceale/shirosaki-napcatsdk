@@ -42,11 +42,23 @@ export class Message {
         return this.segments.map(segment => segment.toJSON())
     }
 
-    // getSegments(): MessageSegment[] {
-    //     return this.segments
-    // }
+    getAllSegment(): MessageSegment[] {
+        return this.segments
+    }
 
     getSegment(index: number): MessageSegment | null {
         return this.segments[index] ?? null
+    }
+
+    toArray(): MessageSegment[] {
+        return this.segments
+    }
+
+    [Symbol.iterator](): Iterator<MessageSegment> {
+        return this.segments[Symbol.iterator]()
+    }
+
+    clone(): Message {
+        return new Message(this.segments.map(segment => segment.clone()))
     }
 }

@@ -26,4 +26,8 @@ export class Poke extends MessageSegment {
             obj?.data?.id ?? ""
         )
     }
+
+    clone() {
+        return new Poke(this.type, this.id)
+    }
 }

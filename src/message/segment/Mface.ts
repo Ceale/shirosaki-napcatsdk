@@ -35,4 +35,14 @@ export class Mface extends MessageSegment {
             }
         }
     }
+    
+    clone() {
+        const obj = new Mface(
+            this.emojiPackageId,
+            this.emojiId,
+            this.summary
+        )
+        obj.key = this.key
+        return obj
+    }
 }

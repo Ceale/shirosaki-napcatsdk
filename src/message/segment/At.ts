@@ -22,4 +22,8 @@ export class At extends MessageSegment {
             }
         }
     }
+
+    clone() {
+        return new At(this.target)
+    }
 }

@@ -43,4 +43,8 @@ export class Sticker extends MessageSegment {
             }
         }
     }
+
+    clone() {
+        return new Sticker(this.data, this.summary)
+    }
 }

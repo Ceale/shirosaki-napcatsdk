@@ -19,4 +19,8 @@ export class Text extends MessageSegment {
     static fromJSON(obj: anyobject) {
         return new this(obj?.data?.text ?? "")
     }
+
+    clone() {
+        return new Text(this.text)
+    }
 }

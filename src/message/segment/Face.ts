@@ -21,4 +21,8 @@ export class Face extends MessageSegment {
         const obj = new this(json?.data?.id ?? "0", json?.data ?? {})
         return obj
     }
+
+    clone() {
+        return new Face(this.id, this.rawData)
+    }
 }
