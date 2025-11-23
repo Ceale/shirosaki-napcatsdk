@@ -18,6 +18,22 @@ export class MessageBuilder {
         return new Message(this.segments)
     }
 
+    template(strings: TemplateStringsArray, ...values: (string | number | boolean | bigint | MessageSegment)[]) {
+        strings.forEach((str, i) => {
+            if (str !== "") this.segments.push(new Text(str))
+            if (values[i] !== undefined) {
+                if (values[i] instanceof MessageSegment) this.segments.push(values[i])
+                else this.segments.push(new Text(String(values[i])))
+            }
+        })
+        return this
+    }
+
+    append(...segments: MessageSegment[]) {
+        this.segments.push(...segments)
+        return this
+    }
+
     text(...params: ConstructorParameters<typeof Text>) {
         this.segments.push(new Text(...params))
         return this
