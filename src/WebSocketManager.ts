@@ -76,7 +76,7 @@ export class WebSocketManager {
             count++
         ) {
 
-            this.logger.debug(`将在 ${interval}ms 后进行第 ${count + 1} 次重连`)
+            this.logger.info(`将在 ${interval}ms 后进行第 ${count + 1} 次重连`)
 
             await wait(this.retryCfg.interval)
 
@@ -87,7 +87,7 @@ export class WebSocketManager {
             }
             
             // 重新连接
-            this.logger.debug(`重新连接中`)
+            this.logger.info(`重新连接中`)
             if (await this.connect()) return true
         }
         return false
