@@ -50,6 +50,9 @@ export class NapCatClient {
     public get state() {
         return this._state
     }
+    public get wsState() {
+        return this.wsManager.wsState
+    }
 
     // 功能模块
     // public Self: NCSelf
@@ -115,16 +118,17 @@ export class NapCatClient {
         return success
     }
 
-
+    
     @BindThis
     public sendData(data: any) {
         this.logger.debug("发送数据", data)
         return this.wsManager.sendData(data)
     }
-
+    
     @BindThis
     private dataHandler(data: any) {
         this.logger.debug("接收数据", data)
+        this.dataMap.forEach(handler => handler(data))
         if (data.hasOwnProperty("post_type")) {
             // 上报数据
             this.postDataHandler(data)
@@ -132,6 +136,16 @@ export class NapCatClient {
             // Action 响应数据
             this.actionRespHandler(data)
         }
+    }
+    
+    private dataMap = new Set<(data: any) => void>()
+
+    public onData(handler: (data: any) => void) {
+        this.dataMap.add(handler)
+    }
+
+    public offData(handler: (data: any) => void) {
+        this.dataMap.delete(handler)
     }
 
 
