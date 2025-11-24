@@ -14,6 +14,10 @@ import { Poke } from "./segment/Poke"
 export class MessageBuilder {
     private segments: MessageSegment[] = []
 
+    static fromMessage(message: Message) {
+        return new this().append(...message.clone().getAllSegment())
+    }
+
     build(): Message {
         return new Message(this.segments)
     }

@@ -65,9 +65,6 @@ export class Message {
     clone(): Message {
         return new Message(this.segments.map(segment => segment.clone()))
     }
-    cloneToBuilder() {
-        return Message.builder().append(...this.clone().segments)
-    }
 
     /**
      * 
