@@ -15,7 +15,7 @@ export class MessageBuilder {
     private segments: MessageSegment[] = []
 
     static fromMessage(message: Message) {
-        return new this().append(...message.clone().getAllSegment())
+        return new this().append(...message.clone().toArray())
     }
 
     build(): Message {

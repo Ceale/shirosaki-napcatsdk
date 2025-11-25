@@ -7,6 +7,10 @@ import { Face } from "./segment/Face"
 
 
 export class Message {
+    
+    constructor(segments: MessageSegment[]) {
+        this.segments = segments
+    }
 
     static builder(): MessageBuilder {
         return new MessageBuilder()
@@ -37,11 +41,16 @@ export class Message {
         return new Message(segments)
     }
 
+    toJSON() {
+        return this.segments.map(segment => segment.toJSON())
+    }
     
-    private segments: MessageSegment[] = []
-    getAllSegment(): MessageSegment[] {
+    segments: MessageSegment[] = []
+
+    toArray(): MessageSegment[] {
         return this.segments
     }
+
     getSegment(index: number): MessageSegment | null {
         return this.segments[index] ?? null
     }
@@ -50,16 +59,8 @@ export class Message {
         return this.segments.length
     }
 
-    constructor(segments: MessageSegment[]) {
-        this.segments = segments
-    }
-
     [Symbol.iterator](): Iterator<MessageSegment> {
         return this.segments[Symbol.iterator]()
-    }
-
-    toJSON() {
-        return this.segments.map(segment => segment.toJSON())
     }
 
     clone(): Message {
@@ -89,35 +90,31 @@ export class Message {
         return deleted
     }
 
-    text() {
+    get text() {
         return this.segments
             .filter(segment => segment instanceof Text)
             .map(segment => segment.text)
             .join("")
     }
 
-    hasSegment(predicate: (segment: MessageSegment, index: number) => boolean) {
+    has(predicate: (segment: MessageSegment, index: number) => boolean) {
         return this.segments.some(predicate)
     }
-    hasSegmentByType<T extends typeof MessageSegment>(type: T) {
-        return this.segments.some(segment => segment instanceof type)
-    }
-    
-    findSegment(predicate: (segment: MessageSegment, index: number) => boolean): MessageSegment | null {
-        return this.segments.find(predicate) ?? null
-    }
-    findSegmentByType<T extends typeof MessageSegment>(type: T): InstanceType<T> | null {
-        // @ts-expect-error 返回的segment只能是T或者undefined，但是ts是个铸币，推导不出来
-        return this.segments.find(segment => segment instanceof type) ?? null
-    }
-
-    findAllSegment(predicate: (segment: MessageSegment, index: number) => boolean): MessageSegment[] {
+    find(predicate: (segment: MessageSegment, index: number) => boolean): MessageSegment[] {
         return this.segments.filter(predicate)
     }
-    findAllSegmentByType<T extends typeof MessageSegment>(type: T): InstanceType<T>[] {
+
+    hasSegment<T extends typeof MessageSegment>(type: T) {
+        return this.segments.some(segment => segment instanceof type)
+    }
+    findSegment<T extends typeof MessageSegment>(type: T): InstanceType<T>[] {
         // @ts-expect-error 注意到，segment的类型显然是type
         return this.segments.filter(segment => segment instanceof type)
     }
+
+    // includes(segments: MessageSegment) {
+    //     return this.segments.some(segment => segment.equals(segments))
+    // }
 
     equals(other: Message) {
         return this.length === other.length
