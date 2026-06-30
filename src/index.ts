@@ -1,3 +1,4 @@
+export * from "./command/Command.ts"
 export * from "./interface/action-map.ts"
 export * from "./interface/action.ts"
 export * from "./interface/event-map.ts"
@@ -23,5 +24,5 @@ export * from "./service/NCSelf.ts"
 export * from "./util/AutoBind.ts"
 export * from "./WebSocketManager.ts"
 /**
- * 生成于：2025/11/24 02:33:45
+ * 生成于：2026/6/30 12:28:47
  */

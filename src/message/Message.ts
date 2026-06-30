@@ -4,6 +4,7 @@ import { Segment } from "./Segment"
 import { MessageSegment } from "./MessageSegment"
 import { Text } from "./segment/Text"
 import { Face } from "./segment/Face"
+import { BindThis } from "src/util/AutoBind"
 
 
 export class Message {
@@ -41,28 +42,34 @@ export class Message {
         return new Message(segments)
     }
 
+    @BindThis
     toJSON() {
         return this.segments.map(segment => segment.toJSON())
     }
     
     segments: MessageSegment[] = []
 
+    @BindThis
     toArray(): MessageSegment[] {
         return this.segments
     }
 
+    @BindThis
     getSegment(index: number): MessageSegment | null {
         return this.segments[index] ?? null
     }
 
+    @BindThis
     get length(): number {
         return this.segments.length
     }
 
+    @BindThis
     [Symbol.iterator](): Iterator<MessageSegment> {
         return this.segments[Symbol.iterator]()
     }
 
+    @BindThis
     clone(): Message {
         return new Message(this.segments.map(segment => segment.clone()))
     }
@@ -73,6 +80,7 @@ export class Message {
      * @param deleteCount 
      * @param segments 
      */
+    @BindThis
     splice(start: number, deleteCount: number, ...segments: MessageSegment[]) {    // 处理负索引
         const normalizedStart = start < 0 
             ? Math.max(this.segments.length + start, 0)
@@ -90,6 +98,7 @@ export class Message {
         return deleted
     }
 
+    @BindThis
     get text() {
         return this.segments
             .filter(segment => segment instanceof Text)
@@ -97,16 +106,20 @@ export class Message {
             .join("")
     }
 
+    @BindThis
     has(predicate: (segment: MessageSegment, index: number) => boolean) {
         return this.segments.some(predicate)
     }
+    @BindThis
     find(predicate: (segment: MessageSegment, index: number) => boolean): MessageSegment[] {
         return this.segments.filter(predicate)
     }
 
+    @BindThis
     hasSegment<T extends typeof MessageSegment>(type: T) {
         return this.segments.some(segment => segment instanceof type)
     }
+    @BindThis
     findSegment<T extends typeof MessageSegment>(type: T): InstanceType<T>[] {
         // @ts-expect-error 注意到，segment的类型显然是type
         return this.segments.filter(segment => segment instanceof type)
@@ -116,6 +129,7 @@ export class Message {
     //     return this.segments.some(segment => segment.equals(segments))
     // }
 
+    @BindThis
     equals(other: Message) {
         return this.length === other.length
             && this.constructor === other.constructor

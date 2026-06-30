@@ -1,7 +1,7 @@
 import EventEmitter from "node:events"
 import { WebSocketManager } from "./WebSocketManager"
 import { BindThis } from "./util/AutoBind"
-import { assert, defineEnum, tryCatch, type anyobject, type EnumKeys } from "@ceale/util"
+import { assert, Enum, tryCatch, type anyobject, type EnumOf } from "@ceale/util"
 import type { Logger } from "./interface/Logger"
 import console from "node:console"
 import type { ActionMap, ActionParams, ActionResp } from "./interface/action"
@@ -34,7 +34,7 @@ export interface NCClientConfig {
     debug?: boolean
 }
 
-export const NapcatClientState = defineEnum("OPEN", "CLOSE")
+export const NapcatClientState = Enum({ OPEN: "OPEN", CLOSE: "CLOSE" })
 
 export class NapCatClient {
     // 配置
@@ -46,7 +46,7 @@ export class NapCatClient {
     private logger: Logger
     private wsManager: WebSocketManager
 
-    private _state: EnumKeys<typeof NapcatClientState> = NapcatClientState.CLOSE
+    private _state: EnumOf<typeof NapcatClientState> = NapcatClientState.CLOSE
     public get state() {
         return this._state
     }

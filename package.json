@@ -1,6 +1,6 @@
 {
   "name": "shirosaki-napcatsdk",
-  "version": "0.4.2",
+  "version": "0.5.0-test.0",
   "author": "Ceale",
   "description": "全新的，省心的，NapCatQQ SDK",
   "repository": {
@@ -30,13 +30,13 @@
     "build:ts": "tsc"
   },
   "dependencies": {
-    "@ceale/util": "1.17.0",
-    "ws": "^8.18.3"
+    "@ceale/util": "^1.22.1",
+    "ws": "^8.21.0"
   },
   "devDependencies": {
-    "@types/node": "^22.19.0",
+    "@types/node": "^22.20.0",
     "@types/ws": "^8.18.1",
     "typescript": "^5.9.3",
-    "esbuild": "^0.27.0"
+    "esbuild": "^0.27.7"
   }
 }

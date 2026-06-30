@@ -1,5 +1,5 @@
 export type EventName = 
-    string & {} |
+    (string & {}) |
     "all" |
 
     "meta_event" |

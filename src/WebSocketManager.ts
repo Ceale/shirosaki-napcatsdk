@@ -1,19 +1,19 @@
 import WebSocket from "ws"
 import type { Logger } from "./interface/Logger"
-import { type EnumKeys, defineEnum, tryCatch, wait } from "@ceale/util"
+import { type EnumOf, Enum, tryCatch, wait } from "@ceale/util"
 import { BindThis } from "./util/AutoBind"
 
 
-const WebsocketState = defineEnum(
-    "CONNECT",
-    "ACTIVE",
-    "CLOSE"
-)
+const WebsocketState = Enum({
+    CONNECT: "CONNECT",
+    ACTIVE: "ACTIVE",
+    CLOSE: "CLOSE"
+})
 
-const WebsocketManagerState = defineEnum(
-    "OPEN",
-    "CLOSE"
-)
+const WebsocketManagerState = Enum({
+    OPEN: "OPEN",
+    CLOSE: "CLOSE"
+})
 
 export class WebSocketManager {
     constructor(
@@ -28,9 +28,9 @@ export class WebSocketManager {
     ) {}
 
     /** WebSocketManager状态 */
-    public wsmState: EnumKeys<typeof WebsocketManagerState> = WebsocketManagerState.CLOSE
+    public wsmState: EnumOf<typeof WebsocketManagerState> = WebsocketManagerState.CLOSE
     /** WebSocketManager状态判断 */
-    private wsmStateIs = (value: EnumKeys<typeof WebsocketManagerState>) => this.wsmState === value
+    private wsmStateIs = (value: EnumOf<typeof WebsocketManagerState>) => this.wsmState === value
     /** 等待关闭的Promise */
     private waitCloseResolve?: () => void
 
@@ -116,7 +116,7 @@ export class WebSocketManager {
     }
 
     /** WebSocket状态 */
-    public wsState: EnumKeys<typeof WebsocketState> = WebsocketState.CLOSE
+    public wsState: EnumOf<typeof WebsocketState> = WebsocketState.CLOSE
     private ws: WebSocket | null = null
     /** 等待WS连接完成（成功或失败）*/
     private waitActiveResolve?: (value: boolean) => void

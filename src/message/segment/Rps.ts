@@ -1,8 +1,8 @@
-import { defineEnum, type anyobject, type EnumKeys } from "@ceale/util"
+import { Enum, type anyobject, type EnumOf } from "@ceale/util"
 import { MessageSegment } from "../MessageSegment"
 
-export const RpsState = defineEnum("ROCK", "SCISSORS", "PAPER")
-export type RpsState = EnumKeys<typeof RpsState>
+export const RpsState = Enum({ ROCK: "ROCK", SCISSORS: "SCISSORS", PAPER: "PAPER" })
+export type RpsState = EnumOf<typeof RpsState>
 
 export class Rps extends MessageSegment {
 
